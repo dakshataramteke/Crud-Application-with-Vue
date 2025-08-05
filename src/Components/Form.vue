@@ -1,4 +1,5 @@
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -9,18 +10,47 @@ export default {
         mobilenumber: "",
         address: "",
       },
+      data: [],
     };
   },
+  methods:{
+ async handleSubmit(){
+  const response = await axios.post("http://localhost:3000/submitform", this.formData);
+  console.log("Response is",response);
+  alert("Form is Submitted");
+
+  this.formData = {
+    fname: "",
+    lname: "",
+    dob: "",
+    mobilenumber: "",
+    address: "",
+   };
+  },
+
+  async fetchData() {
+    try {
+      const response = await axios.get('http://localhost:3000/alldata'); 
+      this.data = response.data; 
+    } catch (error) {
+      this.error = "There was an error fetching the data: " + error.message;
+    } 
+  }
+ },
+  created() {
+    this.fetchData(); 
+  }
+
 };
 </script>
 <template>
   <main class="bg-[#002F63]">
-    <form>
+    <form @submit.prevent="handleSubmit">
       <div class="container py-3">
         <div class="row">
           <div class="form-wrapper bg-white p-5 shadow-xl-amber-50">
             <h2 class="text-2xl font-bold text-center my-3 text-[#002F63]">
-             Registration
+              Registration
             </h2>
 
             <label>First Name</label><br />
@@ -56,7 +86,10 @@ export default {
             ></textarea>
             <br />
             <div class="flex justify-center">
-              <button type="submit" class="cursor-pointer bg-[#2b6abc] text-white">
+              <button
+                type="submit"
+                class="cursor-pointer bg-[#2b6abc] text-white"
+              >
                 Submit
               </button>
             </div>
@@ -81,21 +114,21 @@ export default {
             </tr>
           </thead>
           <tbody class="w-full">
-            <tr>
-              <td class="border border-gray-300 px-2">{{ formData.fname }}</td>
-              <td class="border border-gray-300 px-2">{{ formData.lname }}</td>
-              <td class="border border-gray-300 px-2">{{ formData.dob }}</td>
+            <tr v-for="item in data" :key="item.id">
+              <td class="border border-gray-300 px-2">{{ item.firstname }}</td>
+              <td class="border border-gray-300 px-2">{{ item.lastname }}</td>
+              <td class="border border-gray-300 px-2">{{ item.dob.slice(0, 10) }}</td>
               <td class="border border-gray-300 px-2">
-                {{ formData.mobilenumber }}
+                {{ item.mobile_num }}
               </td>
               <td class="border border-gray-300 px-2">
-                {{ formData.address }}
+                {{ item.address }}
               </td>
               <td
                 class="border border-gray-300 px-2 flex justify-center flex-col md:flex-row"
               >
                 <button
-                  class="mr-2 p-1 m-1 bg-[#2b6abc] text-white px-2 cursor-pointer "
+                  class="mr-2 p-1 m-1 bg-[#2b6abc] text-white px-2 cursor-pointer"
                 >
                   Edit
                 </button>
@@ -126,7 +159,6 @@ export default {
     width: 100%;
   }
 }
-
 
 .form-wrapper button {
   padding: 0.75rem 1.25rem;

@@ -1,21 +1,44 @@
 <script>
-import Form from '@/Components/Form.vue';
-
+import { RouterView } from 'vue-router';
+import CreateForm from './Components/CreateForm.vue';
+import EditForm from './Components/EditForm.vue';
+import AllData from './Components/AllData.vue';
 export default{
- components:{
-  Form
+ data(){
+  return{
+    CreateForm,
+    AllData,
+    EditForm
+  }
  }
 }
 </script>
 
 <template>
-  
-
-  <main>
-   <Form/>
-  </main>
+  <header>
+    <nav class="bg-blue-500 ">
+      <div class="container flex items-center  h-[60px]">
+         <h4 class="text-2xl text-white font-bold me-18 md:me-24">Crud</h4>
+      <ul class="flex">
+        <li>
+          <RouterLink to="/create" class="mx-4 text-white font-bold">Create</RouterLink>
+        
+        </li>
+        <li>
+            <RouterLink to="/alldata" class="text-white font-bold">All Data</RouterLink>
+        </li>
+      
+      </ul>
+      </div>
+     
+    </nav>
+  </header>
+ 
+  <RouterView/>
 </template>
 
 <style scoped>
-
+.container{
+  margin: 0 auto;
+}
 </style>

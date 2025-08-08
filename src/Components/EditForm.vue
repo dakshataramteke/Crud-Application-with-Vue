@@ -3,7 +3,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      showModel:false,
+      showModel: false,
       UpdateUserId: "",
       formData: {
         firstname: "",
@@ -14,16 +14,16 @@ export default {
       },
     };
   },
+
   mounted() {
     this.UpdateUserId = this.$route.params.id;
     this.getUserData(this.$route.params.id);
   },
-  methods: {
 
-      closeForm() {
+  methods: {
+    closeForm() {
       this.showModel = false;
-      this.$router.push('/alldata'); 
-   
+      this.$router.push("/api/users/alldata");
     },
     async getUserData(UserId) {
       const response = await axios.get(
@@ -32,7 +32,11 @@ export default {
       console.log("Response", response);
       this.formData.firstname = response.data.data[0].firstname;
       this.formData.lastname = response.data.data[0].lastname;
-      this.formData.dob = response.data.data[0].dob;
+      this.formData.dob = response.data.data[0].dob
+        .slice(0, 10)
+        .split("-")
+        .reverse()
+        .join("-");
       this.formData.mobile_num = response.data.data[0].mobile_num;
       this.formData.address = response.data.data[0].address;
     },
@@ -44,7 +48,8 @@ export default {
           this.formData
         );
         console.log(response.data);
-        alert("Edit Successfully")
+        alert("Edit Successfully");
+         this.$router.push("/api/users/alldata");
       } catch (err) {
         console.error(err);
       }
@@ -54,7 +59,7 @@ export default {
 </script>
 <template>
   <!-- Edit Table  -->
-  <main class="bg-[#002F63] h-screen">
+  <main class="bg-[#002F63] min-h-[calc(100vh-60px)]">
     <div class="EditTable">
       <form @submit.prevent="updateUser">
         <div class="container py-3">
@@ -62,41 +67,62 @@ export default {
             <div class="form-wrapper bg-white p-5 shadow-xl-amber-50">
               <h2 class="text-2xl font-bold text-center my-2 text-[#002F63]">
                 Edit Form
-                <span @click="closeForm">X</span>
+                <span @click="closeForm" class="cross">X</span>
               </h2>
+              <div>
+                <label
+                  >First Name <span class="text-red-700 ms-1">*</span></label
+                ><br />
+                <input
+                  type="text"
+                  v-model="formData.firstname"
+                  class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+                />
+              </div>
 
-              <label>First Name</label><br />
-              <input
-                type="text"
-                v-model="formData.firstname"
-                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-              /><br />
-              <label>Last Name</label><br />
-              <input
-                type="text"
-                v-model="formData.lastname"
-                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-              /><br />
-              <label>Date of Birth</label><br />
-              <input
-                type="date"
-                v-model="formData.dob"
-                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-              /><br />
-              <label>Mobile Number</label><br />
-              <input
-                type="text"
-                v-model="formData.mobile_num"
-                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-              /><br />
-              <label>Address</label><br />
-              <textarea
-                name=""
-                id=""
-                v-model="formData.address"
-                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-              ></textarea>
-              <br />
+              <div>
+                <label>Last Name <span class="text-red-700 ms-1">*</span></label
+                ><br />
+                <input
+                  type="text"
+                  v-model="formData.lastname"
+                  class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+                />
+              </div>
+
+              <div>
+                <label
+                  >Date of Birth <span class="text-red-700 ms-1">*</span></label
+                ><br />
+                <input
+                  type="date"
+                  v-model="formData.dob"
+                  class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+                />
+              </div>
+
+              <div>
+                <label
+                  >Mobile Number <span class="text-red-700 ms-1">*</span></label
+                ><br />
+                <input
+                  type="text"
+                  v-model="formData.mobile_num"
+                  class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+                />
+              </div>
+
+              <div>
+                <label>Address <span class="text-red-700 ms-1">*</span></label
+                ><br />
+                <textarea
+                  name=""
+                  id=""
+                  v-model="formData.address"
+                  class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+                ></textarea>
+              </div>
+
               <div class="flex justify-center">
                 <button
                   type="submit"
@@ -132,7 +158,7 @@ export default {
   margin: 0.825rem 0;
 }
 
-.form-wrapper span {
+.form-wrapper .cross {
   color: black;
   float: right;
   cursor: pointer;

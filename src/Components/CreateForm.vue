@@ -11,39 +11,69 @@ export default {
         mobilenumber: "",
         address: "",
       },
+      errors: [],
     };
   },
   methods: {
-
-    // Submitting the data 
+    
+    formatDate(dateStr) {
+      return new Date(dateStr).toISOString().slice(0, 10).split('-').reverse().join('-');
+    },
+    // Submitting the data
     async handleSubmit() {
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/api/users",
-          this.formData
-        );
-        console.log("Response is", response);
-        alert("Form is Submitted");
+      this.errors = [];
+      if (!this.formData.fname) {
+        this.errors.fname = "First Name is Required";
+      }
+      if (!this.formData.lname) {
+        this.errors.lname = "Last Name is Required";
+      }
+      if (!this.formData.dob) {
+        this.errors.dob = "Date of Birth is Required";
+      }
+      if (!this.formData.mobilenumber) {
+        this.errors.mobilenumber = "Mobile Number is Required";
+      }
+      if (!this.formData.address) {
+        this.errors.address = "Address is Required";
+      }
+      console.warn("Error", this.errors);
 
-        this.formData = {
-          fname: "",
-          lname: "",
-          dob: "",
-          mobilenumber: "",
-          address: "",
-        };
-      } catch (err) {
-        console.error(err);
+      if (
+        this.formData.fname &&
+        this.formData.lname &&
+        this.formData.dob &&
+        this.formData.mobilenumber &&
+        this.formData.address
+      ) {
+         this.formData.dob = this.formatDate(this.formData.dob);
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/api/users",
+            this.formData
+          );
+          console.log("Response is",this.formData);
+          console.log("Date is ", response.data)
+          alert("Form is Submitted");
+
+          this.formData = {
+            fname: "",
+            lname: "",
+            dob: "",
+            mobilenumber: "",
+            address: "",
+          };
+        } catch (err) {
+          console.error(err);
+        }
       }
     },
-
-  
-},
-}
+  },
+};
 </script>
 <template>
   <!-- Registration Form  -->
-  <main class="bg-[#002F63] h-screen">
+  <main class="bg-[#002F63] min-h-[calc(100vh-60px)]">
     <form @submit.prevent="handleSubmit">
       <div class="container py-3">
         <div class="row">
@@ -52,42 +82,65 @@ export default {
               Registration
             </h2>
 
-            <label>First Name</label><br />
-            <input
-              type="text"
-              v-model="formData.fname"
-              class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-            /><br />
-            <label>Last Name</label><br />
-            <input
-              type="text"
-              v-model="formData.lname"
-              class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-            /><br />
-            <label>Date of Birth</label><br />
-            <input
-              type="date"
-              v-model="formData.dob"
-              class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-            /><br />
-            <label>Mobile Number</label><br />
-            <input
-              type="text"
-              v-model="formData.mobilenumber"
-              class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-            /><br />
-            <label>Address</label><br />
-            <textarea
-              name=""
-              id=""
-              v-model="formData.address"
-              class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-            ></textarea>
-            <br />
+            <div>
+              <label>First Name <span class="text-red-700 ms-1">*</span></label><br />
+              <input
+                type="text"
+                v-model="formData.fname"
+                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+              />
+              <p v-if="errors.fname" class="text-red-500">{{ errors.fname }}</p>
+            </div>
+
+            <div>
+              <label>Last Name <span class="text-red-700 ms-1">*</span></label><br />
+              <input
+                type="text"
+                v-model="formData.lname"
+                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+              />
+              <p v-if="errors.lname" class="text-red-500">{{ errors.lname }}</p>
+            </div>
+
+            <div>
+              <label>Date of Birth <span class="text-red-700 ms-1">*</span></label><br />
+              <input
+                type="date"
+                v-model="formData.dob"
+                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+              />
+              <p v-if="errors.dob" class="text-red-500">{{ errors.dob }}</p>
+            </div>
+            
+            <div>
+              <label>Mobile Number <span class="text-red-700 ms-1">*</span></label>
+              <input
+                type="text"
+                v-model="formData.mobilenumber"
+                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+              />
+              <p v-if="errors.mobilenumber" class="text-red-500">
+                {{ errors.mobilenumber }}
+              </p>
+            </div>
+
+            <div>
+              <label>Address <span class="text-red-700 ms-1">*</span></label>
+              <textarea
+                name=""
+                id=""
+                v-model="formData.address"
+                class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
+              ></textarea>
+              <p v-if="errors.address" class="text-red-500">
+                {{ errors.address }}
+              </p>
+            </div>
+
             <div class="flex justify-center">
               <button
                 type="submit"
-                class="cursor-pointer bg-[#2b6abc] text-white"
+                class="cursor-pointer bg-[#2b6abc] hover:bg-[#0953b5] text-white"
               >
                 Submit
               </button>
@@ -97,9 +150,6 @@ export default {
       </div>
     </form>
   </main>
-
-
-
 </template>
 <style scoped>
 .container {
@@ -120,5 +170,4 @@ export default {
   padding: 0.75rem 1.25rem;
   margin: 0.825rem 0;
 }
-
 </style>

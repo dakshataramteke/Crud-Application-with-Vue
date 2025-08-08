@@ -19,7 +19,7 @@ app.post("/api/users", (req, res) => {
   const query = `INSERT INTO registration (firstname, lastname,dob, mobile_num,  address) VALUES ($1, $2, $3, $4, $5)`;
   values = [fname, lname, dob, mobilenumber, address];
   databaseConn.query(query, values, (error, results) => {
-    if (error) {
+     if (error) {
       console.error("Error executing query:", error);
       return res.status(500).send("Error inserting data");
     } else {
@@ -38,7 +38,7 @@ app.get("/api/users/alldata", (req, res) => {
       console.error("Error executing query", error);
       return res.status(500).send("Error to fetch Data");
     } else {
-      // console.log("My results",results.rows);
+      console.log("My results of alldata",results.rows);
       return res.status(200).send(results.rows);
     }
   });
@@ -47,14 +47,18 @@ app.get("/api/users/alldata", (req, res) => {
 /* ==== Get Data in Edit === */
 
 app.get("/api/users/:id/edit", (req, res) => {
-    console.log(req.body);
   let { id } = req.params;
-  console.log(id);
   const sql = "SELECT * FROM registration WHERE id = $1";
-  databaseConn
-    .query(sql, [id])
+  databaseConn.query(sql, [id])
     .then((results) => {
-      console.log("Edit ", results.rows);
+      results.rows.forEach(row => {
+        const dob = new Date(row.dob);
+        const day = dob.getDate().toString().padStart(2, '0');
+        const month = (dob.getMonth() + 1).toString().padStart(2, '0');
+        const year = dob.getFullYear();
+        row.dob = `${day}-${month}-${year}`; 
+      });
+      console.log(results.rows);
       res.status(200).json({ data: results.rows, success: true });
     })
     .catch((error) => {

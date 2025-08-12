@@ -21,11 +21,11 @@ export default {
   <header>
     <nav class="bg-blue-500">
       <div class="container flex items-center h-[60px]">
-        <router-link to="/"
+        <!-- <router-link to="/"
           ><h4 class="text-2xl text-white font-bold me-18 md:me-24">
             Crud
           </h4></router-link
-        >
+        > -->
 
         <ul class="flex">
           <li>
@@ -37,7 +37,7 @@ export default {
             >
           </li>
           <li>
-            <RouterLink to="/api/users/alldata" class="text-white font-bold">
+            <RouterLink to="/api/users" class="text-white font-bold">
               <span>All Data</span></RouterLink
             >
           </li>

@@ -6,10 +6,10 @@ export default {
       showModel: false,
       UpdateUserId: "",
       formData: {
-        firstname: "",
-        lastname: "",
-        dob: "",
-        mobile_num: "",
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
+        mobileNumber: "",
         address: "",
       },
     };
@@ -23,21 +23,23 @@ export default {
   methods: {
     closeForm() {
       this.showModel = false;
-      this.$router.push("/api/users/alldata");
+      this.$router.push("/api/users");
     },
+
     async getUserData(UserId) {
+    
       const response = await axios.get(
         `http://localhost:3000/api/users/${UserId}/edit`
       );
       console.log("Response", response);
-      this.formData.firstname = response.data.data[0].firstname;
-      this.formData.lastname = response.data.data[0].lastname;
-      this.formData.dob = response.data.data[0].dob
+      this.formData.firstName = response.data.data[0].firstname;
+      this.formData.lastName = response.data.data[0].lastname;
+      this.formData.dateOfBirth = response.data.data[0].dob
         .slice(0, 10)
         .split("-")
         .reverse()
         .join("-");
-      this.formData.mobile_num = response.data.data[0].mobile_num;
+      this.formData.mobileNumber = response.data.data[0].mobile_num;
       this.formData.address = response.data.data[0].address;
     },
 
@@ -49,7 +51,7 @@ export default {
         );
         console.log(response.data);
         alert("Edit Successfully");
-         this.$router.push("/api/users/alldata");
+         this.$router.push("/api/users");
       } catch (err) {
         console.error(err);
       }
@@ -75,7 +77,7 @@ export default {
                 ><br />
                 <input
                   type="text"
-                  v-model="formData.firstname"
+                  v-model="formData.firstName"
                   class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
                 />
               </div>
@@ -85,7 +87,7 @@ export default {
                 ><br />
                 <input
                   type="text"
-                  v-model="formData.lastname"
+                  v-model="formData.lastName"
                   class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
                 />
               </div>
@@ -96,7 +98,7 @@ export default {
                 ><br />
                 <input
                   type="date"
-                  v-model="formData.dob"
+                  v-model="formData.dateOfBirth"
                   class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
                 />
               </div>
@@ -107,7 +109,7 @@ export default {
                 ><br />
                 <input
                   type="text"
-                  v-model="formData.mobile_num"
+                  v-model="formData.mobileNumber"
                   class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
                 />
               </div>

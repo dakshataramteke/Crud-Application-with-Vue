@@ -9,7 +9,7 @@ const router = createRouter({
     routes: [
         {path:'/', component:Home},
         { path: '/api/users/create', component:CreateForm },
-        {path: '/api/users/alldata', component:AllData},
+        {path: '/api/users', component:AllData},
         { path: '/api/users/:id/edit', component: EditForm },
     ]
 });

@@ -13,7 +13,7 @@ export default {
     async fetchData() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/users/alldata"
+          "http://localhost:3000/api/users/"
         );
         this.data = response.data;
         console.log(response.data);
@@ -25,16 +25,14 @@ export default {
     // Delete Data
     async deleteItem(id) {
       try {
-        const response = await axios.delete(`http://localhost:3000/api/${id}`);
+        const response = await axios.delete(`http://localhost:3000/api/users/${id}/delete`); 
         console.log(response.data);
-        this.items = this.items.filter((item) => item.id !== id);
-        // alert("Deleted Data");
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        this.error = "There was an error fetching the data: " + error.message;
       }
     },
   },
-  created() {
+  mounted() {
     this.fetchData();
   },
 };

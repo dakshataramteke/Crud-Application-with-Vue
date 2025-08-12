@@ -5,10 +5,10 @@ export default {
     return {
       showModel: false,
       formData: {
-        fname: "",
-        lname: "",
-        dob: "",
-        mobilenumber: "",
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
+        mobileNumber: "",
         address: "",
       },
       errors: [],
@@ -22,17 +22,17 @@ export default {
     // Submitting the data
     async handleSubmit() {
       this.errors = [];
-      if (!this.formData.fname) {
-        this.errors.fname = "First Name is Required";
+      if (!this.formData.firstName) {
+        this.errors.firstName = "First Name is Required";
       }
-      if (!this.formData.lname) {
-        this.errors.lname = "Last Name is Required";
+      if (!this.formData.lastName) {
+        this.errors.lastName = "Last Name is Required";
       }
-      if (!this.formData.dob) {
-        this.errors.dob = "Date of Birth is Required";
+      if (!this.formData.dateOfBirth) {
+        this.errors.dateOfBirth = "Date of Birth is Required";
       }
-      if (!this.formData.mobilenumber) {
-        this.errors.mobilenumber = "Mobile Number is Required";
+      if (!this.formData.mobileNumber) {
+        this.errors.mobileNumber = "Mobile Number is Required";
       }
       if (!this.formData.address) {
         this.errors.address = "Address is Required";
@@ -40,16 +40,16 @@ export default {
       console.warn("Error", this.errors);
 
       if (
-        this.formData.fname &&
-        this.formData.lname &&
-        this.formData.dob &&
-        this.formData.mobilenumber &&
+        this.formData.firstName &&
+        this.formData.lastName &&
+        this.formData.dateOfBirth &&
+        this.formData.mobileNumber &&
         this.formData.address
       ) {
-         this.formData.dob = this.formatDate(this.formData.dob);
+         this.formData.dateOfBirth = this.formatDate(this.formData.dateOfBirth);
         try {
           const response = await axios.post(
-            "http://localhost:3000/api/users",
+            "http://localhost:3000/api/users/create",
             this.formData
           );
           console.log("Response is",this.formData);
@@ -57,10 +57,10 @@ export default {
           alert("Form is Submitted");
 
           this.formData = {
-            fname: "",
-            lname: "",
-            dob: "",
-            mobilenumber: "",
+            firstName: "",
+            lastName: "",
+            dateOfBirth: "",
+            mobileNumber: "",
             address: "",
           };
         } catch (err) {
@@ -86,41 +86,41 @@ export default {
               <label>First Name <span class="text-red-700 ms-1">*</span></label><br />
               <input
                 type="text"
-                v-model="formData.fname"
+                v-model="formData.firstName"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.fname" class="text-red-500">{{ errors.fname }}</p>
+              <p v-if="errors.firstName" class="text-red-500">{{ errors.fname }}</p>
             </div>
 
             <div>
               <label>Last Name <span class="text-red-700 ms-1">*</span></label><br />
               <input
                 type="text"
-                v-model="formData.lname"
+                v-model="formData.lastName"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.lname" class="text-red-500">{{ errors.lname }}</p>
+              <p v-if="errors.lastName" class="text-red-500">{{ errors.lname }}</p>
             </div>
 
             <div>
               <label>Date of Birth <span class="text-red-700 ms-1">*</span></label><br />
               <input
                 type="date"
-                v-model="formData.dob"
+                v-model="formData.dateOfBirth"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.dob" class="text-red-500">{{ errors.dob }}</p>
+              <p v-if="errors.dateOfBirth" class="text-red-500">{{ errors.dateOfBirth }}</p>
             </div>
             
             <div>
               <label>Mobile Number <span class="text-red-700 ms-1">*</span></label>
               <input
                 type="text"
-                v-model="formData.mobilenumber"
+                v-model="formData.mobileNumber"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.mobilenumber" class="text-red-500">
-                {{ errors.mobilenumber }}
+              <p v-if="errors.mobileNumber" class="text-red-500">
+                {{ errors.mobileNumber }}
               </p>
             </div>
 

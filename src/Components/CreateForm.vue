@@ -21,6 +21,7 @@ export default {
     },
     // Submitting the data
     async handleSubmit() {
+    
       this.errors = [];
       if (!this.formData.firstName) {
         this.errors.firstName = "First Name is Required";
@@ -52,6 +53,7 @@ export default {
             "http://localhost:3000/api/users/create",
             this.formData
           );
+          
           console.log("Response is",this.formData);
           console.log("Date is ", response.data)
           alert("Form is Submitted");
@@ -89,7 +91,7 @@ export default {
                 v-model="formData.firstName"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.firstName" class="text-red-500">{{ errors.fname }}</p>
+              <p v-if="errors.firstName" class="text-red-500">{{ errors.firstName }}</p>
             </div>
 
             <div>
@@ -99,7 +101,7 @@ export default {
                 v-model="formData.lastName"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.lastName" class="text-red-500">{{ errors.lname }}</p>
+              <p v-if="errors.lastName" class="text-red-500">{{ errors.lastName }}</p>
             </div>
 
             <div>

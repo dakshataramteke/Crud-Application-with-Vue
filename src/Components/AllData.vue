@@ -15,8 +15,7 @@ export default {
         const response = await axios.get(
           "http://localhost:3000/api/users/"
         );
-        this.data = response.data;
-        console.log(response.data);
+        this.data = response.data.data;
       } catch (error) {
         this.error = "There was an error fetching the data: " + error.message;
       }
@@ -25,8 +24,9 @@ export default {
     // Delete Data
     async deleteItem(id) {
       try {
-        const response = await axios.delete(`http://localhost:3000/api/users/${id}/delete`); 
+        const response = await axios.delete(`http://localhost:3000/api/${id}/delete`); 
         console.log(response.data);
+        confirm("Are you want to Delete")
       } catch (error) {
         this.error = "There was an error fetching the data: " + error.message;
       }
@@ -69,7 +69,9 @@ export default {
                 <td class="border border-[#002F63] px-2">{{ item.lastname }}</td>
                 <td class="border border-[#002F63] px-2">
   
-                  {{ item.dob.slice(0, 10).split('-').reverse().join('-')}}
+                  <!-- {{ item.dob.slice(0, 10).split('-').reverse().join('-')}} -->
+                   
+                      {{ item.dateOfBirth }}
                 </td>
                 <td class="border border-[#002F63] px-2">
                   {{ item.mobile_num }}

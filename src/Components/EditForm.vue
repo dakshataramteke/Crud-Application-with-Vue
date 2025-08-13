@@ -26,15 +26,16 @@ export default {
       this.$router.push("/api/users");
     },
 
+    // Get Edit User 
     async getUserData(UserId) {
     
       const response = await axios.get(
         `http://localhost:3000/api/users/${UserId}/edit`
       );
-      console.log("Response", response);
+      console.log("Response Edit ", response);
       this.formData.firstName = response.data.data[0].firstname;
       this.formData.lastName = response.data.data[0].lastname;
-      this.formData.dateOfBirth = response.data.data[0].dob
+      this.formData.dateOfBirth = response.data.data[0].dateOfBirth
         .slice(0, 10)
         .split("-")
         .reverse()

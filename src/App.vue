@@ -28,6 +28,11 @@ export default {
         > -->
 
         <ul class="flex">
+           <li>
+            <RouterLink to="/api/users" class="text-white font-bold">
+              <span>Users</span></RouterLink
+            >
+          </li>
           <li>
             <RouterLink
               to="/api/users/create"
@@ -36,11 +41,7 @@ export default {
               <span> Create</span></RouterLink
             >
           </li>
-          <li>
-            <RouterLink to="/api/users" class="text-white font-bold">
-              <span>All Data</span></RouterLink
-            >
-          </li>
+         
         </ul>
       </div>
     </nav>

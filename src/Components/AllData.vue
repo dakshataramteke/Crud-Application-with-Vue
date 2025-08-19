@@ -69,9 +69,8 @@ export default {
                 <td class="border border-[#002F63] px-2">{{ item.lastname }}</td>
                 <td class="border border-[#002F63] px-2">
   
-                  <!-- {{ item.dob.slice(0, 10).split('-').reverse().join('-')}} -->
-                   
-                      {{ item.dateOfBirth }}
+                  <!-- {{ item.dob.slice(0, 10).split('-').reverse().join('-')}}                                       -->
+                      {{ item.dateOfBirth }} 
                 </td>
                 <td class="border border-[#002F63] px-2">
                   {{ item.mobile_num }}
@@ -84,7 +83,7 @@ export default {
                 >
                   <button>
                     <RouterLink
-                      :to="{ path: '/api/users/' + item.id + '/edit' }"
+                      :to="{ path: '/users/' + item.id + '/edit' }"
                       class="mr-2 p-1 m-1 bg-[#2b6abc] text-white px-2 cursor-pointer "
                       >Edit</RouterLink
                     >

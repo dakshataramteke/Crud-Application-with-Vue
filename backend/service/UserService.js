@@ -27,7 +27,8 @@ const getUsersData = async(getData) => {
       const month = (dateOfBirth.getMonth() + 1).toString().padStart(2, '0');
       const year = dateOfBirth.getFullYear();
       row.dateOfBirth = `${day}-${month}-${year}`; 
-    });
+    }
+  );
     
        console.log("Get User Data",result.rows);
       return result.rows;

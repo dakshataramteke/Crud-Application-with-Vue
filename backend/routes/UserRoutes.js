@@ -20,7 +20,7 @@ const userValidation= (req,res,next)=>{
 router.post('/users/create',userValidation,createUser);
 router.get('/users/', getUsers);
 router.get("/users/:id/edit",getEditUser);
-router.put("/users/:id/edit",editUser);
+router.put("/users/:id/edit",userValidation,editUser);
 router.delete("/:id/delete", deleteUser)
 
 module.exports = router;

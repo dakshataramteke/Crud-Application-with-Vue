@@ -23,7 +23,7 @@ export default {
   methods: {
     closeForm() {
       this.showModel = false;
-      this.$router.push("/api/users");
+      this.$router.push("/users");
     },
 
     // Get Edit User 

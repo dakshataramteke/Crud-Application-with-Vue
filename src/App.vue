@@ -1,18 +1,14 @@
 <script>
 import { RouterView } from "vue-router";
 import CreateForm from "./Components/CreateForm.vue";
-import Home from "./Components/Home.vue";
 import EditForm from "./Components/EditForm.vue";
 import AllData from "./Components/AllData.vue";
 
 export default {
-  data() {
-    return {
-      Home,
+  components:{
       CreateForm,
       AllData,
       EditForm,
-    };
   },
 };
 </script>
@@ -25,7 +21,7 @@ export default {
         <ul class="flex">
            <li>
             <RouterLink to="/users" class="text-white font-bold">
-              <span>Users</span></RouterLink
+              <span @filteredData="filteredData">Users</span></RouterLink
             >
           </li>
           <li>
@@ -36,9 +32,10 @@ export default {
               <span> Create</span></RouterLink
             >
           </li>
-         
+          
         </ul>
       </div>
+     
     </nav>
   </header>
 
@@ -64,5 +61,8 @@ span::after {
 }
 span:hover::after {
   width: 100%;
+}
+.search{
+  border:2px solid black;
 }
 </style>

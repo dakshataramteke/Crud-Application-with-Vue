@@ -8,6 +8,8 @@ export default {
       search: "",
       currentPage: 1,
       itemsPerPage: 5, // how many item do you want to display in one Page
+      selectedOption: "",
+      activeIndex: 1
     };
   },
   methods: {
@@ -49,9 +51,35 @@ export default {
         this.error = "There was an error fetching the data: " + error.message;
       }
     },
+
+    // Page No 
     changePage(page) {
       this.currentPage = page;
+       this.activeIndex = page;
     },
+
+    // Filtering of Ascending Order
+   SelectFilter() {
+  console.log("Asc Called");
+  if (this.selectedOption === "firstName") {
+    this.data.sort((a, b) => {
+      const nameA = a.firstname.toLowerCase();
+      const nameB = b.firstname.toLowerCase();
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      return 0;
+    });
+  }
+
+if (this.selectedOption === "dob") {
+      this.data.sort((a, b) => {
+        const dateA = new Date(a.dateOfBirth.split('-').reverse().join('-'));
+        const dateB = new Date(b.dateOfBirth.split('-').reverse().join('-'));
+        return dateA - dateB;
+      });
+    }
+}
+
   },
 
   computed: {
@@ -61,7 +89,7 @@ export default {
         return s.firstname.toLowerCase().includes(this.search.toLowerCase());
       });
     },
-
+  
     paginatedData() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       return this.filteredData.slice(start, start + this.itemsPerPage);
@@ -82,19 +110,24 @@ export default {
   <main class="bg-[#002F63] min-h-[calc(100vh-160px)]">
     <div class="container py-3">
       <div class="row">
-        <div class="flex justify-end ">
-             <input
-          type="search"
-          v-model="search"
-          class="search"
-          placeholder="Search by Firstname"
-        />
+        <div class="flex" >
+          <input
+            type="search"
+            v-model="search"
+            class="search"
+            placeholder="Search by Firstname"
+          />
+          <select
+            v-model="selectedOption"
+            class="border-2 border-white ms-4 text-white bg-[#002F63] p-1"  @change="SelectFilter"  
+          >
+          <option value="">Select</option>
+            <option value="firstName" >First Name</option>
+            <option value="dob">Date of Birth</option>
+          </select>
         </div>
-     
 
-        <h3 class=" text-white text-2xl font-bold my-4">
-          All Records
-        </h3>
+        <h3 class="text-white text-2xl font-bold my-4">All Records</h3>
         <div class="overflow-x-auto">
           <table class="border-collapse w-full bg-white overflow-auto">
             <thead>
@@ -108,7 +141,7 @@ export default {
                 <th class="border border-[#002F63] py-2">Actions</th>
               </tr>
             </thead>
-            <tbody class="w-full">
+            <tbody class="w-full" v-if="paginatedData.length > 0">
               <tr v-for="item in paginatedData" :key="item.id">
                 <td class="hidden">{{ item.id }}</td>
                 <td class="border border-[#002F63] px-2">
@@ -147,14 +180,21 @@ export default {
                 </td>
               </tr>
             </tbody>
-         
+            <tbody v-else>
+              <tr>
+                <td colspan="7" class="text-center border border-[#002F63] p-4 font-bold">
+                  <img src="../assets/no result.png" alt="No result Found" class="mx-auto h-32">
+                 <p class="mt-4">No data available</p>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
     </div>
   </main>
 
-  <main class="bg-[#002F63] py-5">
+<main class="bg-[#002F63] py-5">
      <!-- Pagination  -->
       <div class="pagination">
         <ul class="flex justify-center">
@@ -163,6 +203,7 @@ export default {
             :key="page"
             @click="changePage(page)"
             class="cursor-pointer"
+            :class="{ 'active': page === activeIndex }"
           >
             {{ page }}
           </li>
@@ -178,8 +219,8 @@ export default {
 }
 .search {
   border: 2px solid white;
-  padding:8px;
-  border-radius: 20px;
+  padding: 8px;
+  width: 100%;
 }
 ::placeholder {
   color: white;
@@ -197,4 +238,8 @@ li {
   border: 2px solid white;
   margin: 10px;
 }
+.active {
+   font-weight: bold;
+  background-color: #2B7FFF;
+    }
 </style>

@@ -15,13 +15,16 @@ export default {
     };
   },
   methods: {
-    
     formatDate(dateStr) {
-      return new Date(dateStr).toISOString().slice(0, 10).split('-').reverse().join('-');
+      return new Date(dateStr)
+        .toISOString()
+        .slice(0, 10)
+        .split("-")
+        .reverse()
+        .join("-");
     },
     // Submitting the data
     async handleSubmit() {
-    
       this.errors = [];
       if (!this.formData.firstName) {
         this.errors.firstName = "First Name is Required";
@@ -47,16 +50,22 @@ export default {
         this.formData.mobileNumber &&
         this.formData.address
       ) {
-         this.formData.dateOfBirth = this.formatDate(this.formData.dateOfBirth);
+        this.formData.dateOfBirth = this.formatDate(this.formData.dateOfBirth);
         try {
           const response = await axios.post(
             "http://localhost:3000/api/users/create",
             this.formData
           );
-          
-          console.log("Response is",this.formData);
-          console.log("Date is ", response.data)
-          alert("Form is Submitted");
+
+          console.log("Response is", this.formData);
+          console.log("Date is ", response.data);
+          Swal.fire({
+            title: "Successfully",
+            text: "Form is Submitted",
+            icon: "success",
+            iconColor:'#1a9922',
+            confirmButtonColor: '#0953B5'
+          });
 
           this.formData = {
             firstName: "",
@@ -85,37 +94,49 @@ export default {
             </h2>
 
             <div>
-              <label>First Name <span class="text-red-700 ms-1">*</span></label><br />
+              <label>First Name <span class="text-red-700 ms-1">*</span></label
+              ><br />
               <input
                 type="text"
                 v-model="formData.firstName"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.firstName" class="text-red-500">{{ errors.firstName }}</p>
+              <p v-if="errors.firstName" class="text-red-500">
+                {{ errors.firstName }}
+              </p>
             </div>
 
             <div>
-              <label>Last Name <span class="text-red-700 ms-1">*</span></label><br />
+              <label>Last Name <span class="text-red-700 ms-1">*</span></label
+              ><br />
               <input
                 type="text"
                 v-model="formData.lastName"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.lastName" class="text-red-500">{{ errors.lastName }}</p>
+              <p v-if="errors.lastName" class="text-red-500">
+                {{ errors.lastName }}
+              </p>
             </div>
 
             <div>
-              <label>Date of Birth <span class="text-red-700 ms-1">*</span></label><br />
+              <label
+                >Date of Birth <span class="text-red-700 ms-1">*</span></label
+              ><br />
               <input
                 type="date"
                 v-model="formData.dateOfBirth"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
               />
-              <p v-if="errors.dateOfBirth" class="text-red-500">{{ errors.dateOfBirth }}</p>
+              <p v-if="errors.dateOfBirth" class="text-red-500">
+                {{ errors.dateOfBirth }}
+              </p>
             </div>
-            
+
             <div>
-              <label>Mobile Number <span class="text-red-700 ms-1">*</span></label>
+              <label
+                >Mobile Number <span class="text-red-700 ms-1">*</span></label
+              >
               <input
                 type="text"
                 v-model="formData.mobileNumber"
@@ -171,5 +192,10 @@ export default {
 .form-wrapper button {
   padding: 0.75rem 1.25rem;
   margin: 0.825rem 0;
+}
+
+/* ok Button Color  */
+div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm){
+  background-color: #2b6abc !important;
 }
 </style>

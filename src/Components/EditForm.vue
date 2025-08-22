@@ -23,12 +23,11 @@ export default {
   methods: {
     closeForm() {
       this.showModel = false;
-      this.$router.push("/api/users");
+      this.$router.push("/users");
     },
 
-    // Get Edit User 
+    // Get Edit User
     async getUserData(UserId) {
-    
       const response = await axios.get(
         `http://localhost:3000/api/users/${UserId}/edit`
       );
@@ -51,8 +50,15 @@ export default {
           this.formData
         );
         console.log(response.data);
-        alert("Edit Successfully");
-         this.$router.push("/api/users");
+        Swal.fire({
+          title: "Successfully",
+          text: "Edit Successfully",
+          icon: "success",
+          iconColor:'#1a9922',
+          confirmButtonColor: '#0953B5'
+       
+        });
+        this.$router.push("/users");
       } catch (err) {
         console.error(err);
       }
@@ -165,5 +171,9 @@ export default {
   color: black;
   float: right;
   cursor: pointer;
+}
+/* ok Button Color  */
+div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm){
+  background-color: #2b6abc !important;
 }
 </style>

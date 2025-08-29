@@ -1,8 +1,7 @@
-const express = require('express');
+import express from "express";
 const router = express.Router();
-const {createUser,getUsers,getEditUser, editUser,deleteUser} = require('../Controllers/UserControllers');
-const {validationSchema} = require("../middleware/Validation");
-
+import {createUser,getUsers,getEditUser, editUser,deleteUser} from '../Controllers/UserControllers.js';
+import validationSchema from "../middleware/Validation.js"; 
 
 const userValidation= (req,res,next)=>{
     console.log("USer Validation Working");
@@ -18,9 +17,9 @@ const userValidation= (req,res,next)=>{
 
 
 router.post('/users/create',userValidation,createUser);
-router.get('/users/', getUsers);
+router.get('/users',getUsers);
 router.get("/users/:id/edit",getEditUser);
 router.put("/users/:id/edit",userValidation,editUser);
-router.delete("/:id/delete", deleteUser)
+router.delete("/:id/delete", deleteUser);
 
-module.exports = router;
+export default router;

@@ -6,20 +6,38 @@ export default {
     return {
       data: [],
       search: "",
+      isLoading: false,
       currentPage: 1,
-      itemsPerPage: 5, // how many item do you want to display in one Page
-      selectedOption: "",
-      activeIndex: 1
+      totalPages: 0,
+      limit: 10,
+      selectedSortBy: "",
+      selectedOrder: "",
     };
   },
   methods: {
     // Show All Data
     async fetchData() {
+      this.isLoading = true;
+
       try {
-        const response = await axios.get("http://localhost:3000/api/users");
-        this.data = response.data.data;
+        const response = await axios.get("http://localhost:3000/api/users", {
+          params: {
+            query: this.search,
+            sortBy: this.selectedSortBy,
+            order: this.selectedOrder,
+            page: this.currentPage,
+            limit: this.limit,
+          },
+        });
+        // this.data = response.data.data;
+        this.data = response.data.data.formattedRows;
+        this.totalPages = Math.ceil(response.data.data.totalUsers / this.limit);
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 2000);
       } catch (error) {
         this.error = "There was an error fetching the data: " + error.message;
+        this.isLoading = false;
       }
     },
 
@@ -44,7 +62,10 @@ export default {
               title: "Deleted!",
               text: "Your file has been deleted.",
               icon: "success",
+              iconColor: "#dc143c",
+              confirmButtonColor: "#0953B5",
             });
+            this.fetchData();
           }
         });
       } catch (error) {
@@ -52,53 +73,37 @@ export default {
       }
     },
 
-    // Page No 
-    changePage(page) {
-      this.currentPage = page;
-       this.activeIndex = page;
+    handleSearch() {
+      this.currentPage = 1;
+      this.fetchData();
     },
 
-    // Filtering of Ascending Order
-   SelectFilter() {
-  console.log("Asc Called");
-  if (this.selectedOption === "firstName") {
-    this.data.sort((a, b) => {
-      const nameA = a.firstname.toLowerCase();
-      const nameB = b.firstname.toLowerCase();
-      if (nameA < nameB) return -1;
-      if (nameA > nameB) return 1;
-      return 0;
-    });
-  }
+    handleFilterChange() {
+      this.currentPage = 1;
+      this.fetchData();
+    },
+    previousPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.fetchData();
+      }
+    },
 
-if (this.selectedOption === "dob") {
-      this.data.sort((a, b) => {
-        const dateA = new Date(a.dateOfBirth.split('-').reverse().join('-'));
-        const dateB = new Date(b.dateOfBirth.split('-').reverse().join('-'));
-        return dateA - dateB;
-      });
-    }
-}
-
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+        this.fetchData();
+      }
+    },
+    changePage(page) {
+      this.fetchData();
+    },
   },
 
-  computed: {
-    //Search the item
-    filteredData() {
-      return this.data.filter((s) => {
-        return s.firstname.toLowerCase().includes(this.search.toLowerCase());
-      });
-    },
-  
-    paginatedData() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      return this.filteredData.slice(start, start + this.itemsPerPage);
-    },
-
-    // Total pages
-    totalPages() {
-      return Math.ceil(this.filteredData.length / this.itemsPerPage);
-    },
+  watch: {
+    search: "handleSearch",
+    selectedSortBy: "handleFilterChange",
+    selectedOrder: "handleFilterChange",
   },
   mounted() {
     this.fetchData();
@@ -107,109 +112,152 @@ if (this.selectedOption === "dob") {
 </script>
 <template>
   <!-- Table Data  -->
-  <main class="bg-[#002F63] min-h-[calc(100vh-160px)]">
-    <div class="container py-3">
-      <div class="row">
-        <div class="flex" >
-          <input
-            type="search"
-            v-model="search"
-            class="search"
-            placeholder="Search by Firstname"
-          />
-          <select
-            v-model="selectedOption"
-            class="border-2 border-white ms-4 text-white bg-[#002F63] p-1"  @change="SelectFilter"  
-          >
-          <option value="">Select</option>
-            <option value="firstName" >First Name</option>
-            <option value="dob">Date of Birth</option>
-          </select>
-        </div>
+  <div
+    v-if="isLoading"
+    class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-70px)]"
+  >
+    <div
+      class="text-white flex justify-center items-center h-[calc(100vh-60px)]"
+    >
+      <p><i class="pi pi-spin pi-spinner" style="font-size: 5rem"></i></p>
+    </div>
+  </div>
+  <main class="bg-gradient-to-br from-gray-900 to-blue-900" v-else-if="data">
+    <main class="min-h-[calc(100vh-160px)]">
+      <div class="container py-3">
+        <div class="row">
+          <div class="flex">
+            <input
+              type="search"
+              v-model="search"
+              class="search"
+              placeholder="Search by Firstname & Lastname"
+            />
+            <select
+              v-model="selectedSortBy"
+              class="border-2 border-white ms-4 text-white bg-[#002F63] p-1 px-2"
+            >
+              <option value="">Select Sort By</option>
+              <option value="first_name">First Name</option>
+              <option value="dob">Date of Birth</option>
+            </select>
 
-        <h3 class="text-white text-2xl font-bold my-4">All Records</h3>
-        <div class="overflow-x-auto">
-          <table class="border-collapse w-full bg-white overflow-auto">
-            <thead>
-              <tr class="bg-blue-400">
-                <th class="border-[#002F63] hidden">id</th>
-                <th class="border border-[#002F63]">First Name</th>
-                <th class="border border-[#002F63] py-2">Last Name</th>
-                <th class="border border-[#002F63] py-2">Date of Birth</th>
-                <th class="border border-[#002F63] py-2">Mobile Number</th>
-                <th class="border border-[#002F63] py-2">Address</th>
-                <th class="border border-[#002F63] py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="w-full" v-if="paginatedData.length > 0">
-              <tr v-for="item in paginatedData" :key="item.id">
-                <td class="hidden">{{ item.id }}</td>
-                <td class="border border-[#002F63] px-2">
-                  {{ item.firstname }}
-                </td>
-                <td class="border border-[#002F63] px-2">
-                  {{ item.lastname }}
-                </td>
-                <td class="border border-[#002F63] px-2">
-                  <!-- {{ item.dob.slice(0, 10).split('-').reverse().join('-')}}                                       -->
-                  {{ item.dateOfBirth }}
-                </td>
-                <td class="border border-[#002F63] px-2">
-                  {{ item.mobile_num }}
-                </td>
-                <td class="border border-[#002F63] px-2">
-                  {{ item.address }}
-                </td>
-                <td
-                  class="border border-[#002F63] px-2 flex justify-center flex-col md:flex-row"
-                >
-                  <button>
-                    <RouterLink
-                      :to="{ path: '/users/' + item.id + '/edit' }"
-                      class="mr-2 p-1 m-1 bg-[#2b6abc] text-white px-2 cursor-pointer"
-                      >Edit</RouterLink
-                    >
-                  </button>
+            <select
+              v-model="selectedOrder"
+              class="border-2 border-white ms-4 text-white bg-[#002F63] p-1 px-2"
+            >
+              <option value="">Select Order</option>
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
 
-                  <button
-                    class="text-white p-1 m-1 bg-red-500 px-2 cursor-pointer"
-                    @click="deleteItem(item.id)"
+          <h3 class="text-white text-2xl font-bold my-4">All Records</h3>
+          <div class="overflow-x-auto">
+            <table class="border-collapse w-full bg-white overflow-auto">
+              <thead>
+                <tr class="bg-blue-500 text-white">
+                  <th class="border-[#002F63] hidden">id</th>
+                  <th class="border border-[#002F63]">First Name</th>
+                  <th class="border border-[#002F63] py-2">Last Name</th>
+                  <th class="border border-[#002F63] py-2">Date of Birth</th>
+                  <th class="border border-[#002F63] py-2">Mobile Number</th>
+                  <th class="border border-[#002F63] py-2">Address</th>
+                  <th class="border border-[#002F63] py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="w-full" v-if="data.length > 0">
+                <tr v-for="item in data" :key="item.id">
+                  <td class="hidden">{{ item.id }}</td>
+                  <td class="border border-[#002F63] px-2">
+                    {{ item.firstname }}
+                  </td>
+                  <td class="border border-[#002F63] px-2">
+                    {{ item.lastname }}
+                  </td>
+                  <td class="border border-[#002F63] px-2">
+                    <!-- {{ item.dob.slice(0, 10).split('-').reverse().join('-')}}                                       -->
+                    {{ item.dateOfBirth }}
+                  </td>
+                  <td class="border border-[#002F63] px-2">
+                    {{ item.mobile_num }}
+                  </td>
+                  <td class="border border-[#002F63] px-2">
+                    {{ item.address }}
+                  </td>
+                  <td
+                    class="border border-[#002F63] px-2 flex justify-center flex-col md:flex-row pt-2"
                   >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-            <tbody v-else>
-              <tr>
-                <td colspan="7" class="text-center border border-[#002F63] p-4 font-bold">
-                  <img src="../assets/no result.png" alt="No result Found" class="mx-auto h-32">
-                 <p class="mt-4">No data available</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    <button>
+                      <RouterLink
+                        :to="{ path: '/users/' + item.id + '/edit' }"
+                        class="mr-2 p-1 m-1 bg-[#2b6abc] text-white px-2 cursor-pointer"
+                        >Edit</RouterLink
+                      >
+                    </button>
+
+                    <button
+                      class="text-white p-1 m-1 bg-red-500 px-2 cursor-pointer"
+                      @click="deleteItem(item.id)"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody v-else>
+                <tr>
+                  <td
+                    colspan="7"
+                    class="text-center border border-[#002F63] p-4 font-bold"
+                  >
+                    <img
+                      src="../assets/no result.png"
+                      alt="No result Found"
+                      class="mx-auto h-32"
+                    />
+                    <p class="mt-4">No data available</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-<main class="bg-[#002F63] py-5">
-     <!-- Pagination  -->
-      <div class="pagination">
-        <ul class="flex justify-center">
+    <main class="py-5">
+      <!-- Pagination  -->
+      <div class="pagination flex justify-around">
+        <ul class="flex justify-center cursor-pointer">
+          <li @click="previousPage" class="hover:bg-blue-500">Previous</li>
           <li
             v-for="page in totalPages"
             :key="page"
             @click="changePage(page)"
-            class="cursor-pointer"
-            :class="{ 'active': page === activeIndex }"
+            :class="{ active: page === currentPage }"
+            class="hover:bg-blue-500"
           >
             {{ page }}
           </li>
+          <li @click="nextPage" class="hover:bg-blue-500">Next</li>
+        </ul>
 
+        <ul class="flex items-center p-2">
+          <label for="my-select" class="text-white me-4">Page :</label>
+          <select
+            id="my-select"
+            class="bg-blue-500 cursor-pointer p-1 text-white border-2 border-white"
+            v-model="currentPage"
+            @change="changePage(currentPage)"
+          >
+            <option v-for="page in totalPages" :key="page" :value="page">
+              {{ page }}
+            </option>
+          </select>
         </ul>
       </div>
+    </main>
   </main>
 </template>
 
@@ -239,7 +287,7 @@ li {
   margin: 10px;
 }
 .active {
-   font-weight: bold;
-  background-color: #2B7FFF;
-    }
+  font-weight: bold;
+  background-color: #2b7fff;
+}
 </style>

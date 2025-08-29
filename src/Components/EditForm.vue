@@ -68,7 +68,7 @@ export default {
 </script>
 <template>
   <!-- Edit Table  -->
-  <main class="bg-[#002F63] min-h-[calc(100vh-60px)]">
+  <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
     <div class="EditTable">
       <form @submit.prevent="updateUser">
         <div class="container py-3">

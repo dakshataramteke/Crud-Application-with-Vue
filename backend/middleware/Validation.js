@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi'
 
 const validationSchema = Joi.object({
 firstName: Joi.string().required(),
@@ -8,4 +8,4 @@ mobileNumber:Joi.string().required(),
 address:Joi.string().required()
 })
 
-module.exports= {validationSchema};
+export default validationSchema;

@@ -61,7 +61,7 @@ export default {
           console.log("Date is ", response.data);
           Swal.fire({
             title: "Successfully",
-            text: "Form is Submitted",
+            text: "New User Created",
             icon: "success",
             iconColor:'#1a9922',
             confirmButtonColor: '#0953B5'
@@ -84,7 +84,7 @@ export default {
 </script>
 <template>
   <!-- Registration Form  -->
-  <main class="bg-[#002F63] min-h-[calc(100vh-60px)]">
+  <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
     <form @submit.prevent="handleSubmit">
       <div class="container py-3">
         <div class="row">

@@ -1,8 +1,8 @@
-const userService = require('../service/UserService');
+import userService from '../service/UserService.js';
 
 /* === Registration Form === */
 
-const createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   try {
     const userData = req.body;
     const createdUser = await userService.createUserData(userData)
@@ -23,27 +23,30 @@ const createUser = async (req, res) => {
 
 /* ==== Get All Users Data ==== */ 
 
-const getUsers = async(req,res)=>{
-    try{
-        const getUser = await userService.getUsersData()
+export const getUsers = async (req, res) => {
+  try {
+    console.log("search", req.query);
+     const { query: searchTerm, page = 1, limit = 10, sortBy = "created_at", order = "asc" } = req.query;
+    const users = await userService.getUsersData({  query: searchTerm, page, limit, sortBy, order });
 
-        res.status(200).json({
-            success:true,
-            message:"Get User Successfully",
-            data : getUser
-        });
-    }catch(error){
-        console.error("Error in getting Data:", error);
-        res.status(500).json({
-            success:false,
-            message:error.message
-        })
-    }
-}
+    res.status(200).json({
+      success: true,
+      message: "Get User Successfully",
+      data: users,
+    });
+  } catch (error) {
+    console.error("Error in getting Data:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 
 /* === Get Edit USers ===  */
 
-const getEditUser = async(req,res)=>{
+export const getEditUser = async(req,res)=>{
     try{
            let { id } = req.params;
 
@@ -64,7 +67,7 @@ const getEditUser = async(req,res)=>{
 
 /* === Edit User === */ 
 
-const editUser = async(req,res) =>{
+export const editUser = async(req,res) =>{
     try{
         let { id } = req.params;
         const userData = req.body;
@@ -86,7 +89,7 @@ const editUser = async(req,res) =>{
 
 /* === Delete the Data === */
 
-const deleteUser = async(req,res)=>{
+export const deleteUser = async(req,res)=>{
     try{
           const { id } = req.params;
         const getUser = await userService.deleteUser(id)
@@ -104,12 +107,4 @@ const deleteUser = async(req,res)=>{
     }
 
 }
-
-module.exports = {
-  createUser,
-   getUsers,
-   getEditUser, 
-   editUser, 
-   deleteUser
-};
 

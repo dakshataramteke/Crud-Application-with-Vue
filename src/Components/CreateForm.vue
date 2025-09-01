@@ -4,6 +4,7 @@ export default {
   data() {
     return {
       showModel: false,
+      isLoading: false,
       formData: {
         firstName: "",
         lastName: "",
@@ -42,7 +43,7 @@ export default {
         this.errors.address = "Address is Required";
       }
       console.warn("Error", this.errors);
-
+      this.isLoading = true;
       if (
         this.formData.firstName &&
         this.formData.lastName &&
@@ -74,9 +75,13 @@ export default {
             mobileNumber: "",
             address: "",
           };
+           setTimeout(() => {
+          this.isLoading = false;
+        }, 2000);
         } catch (err) {
           console.error(err);
         }
+        
       }
     },
   },

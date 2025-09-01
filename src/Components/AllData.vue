@@ -9,7 +9,7 @@ export default {
       isLoading: false,
       currentPage: 1,
       totalPages: 0,
-      limit: 10,
+      limit: 3,
       selectedSortBy: "",
       selectedOrder: "",
     };
@@ -99,6 +99,25 @@ export default {
       this.fetchData();
     },
   },
+computed: {
+  visiblePages() {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const maxVisible = 3;
+    let start = Math.max(1, current - 1);
+    let end = Math.min(total, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+},
 
   watch: {
     search: "handleSearch",
@@ -176,8 +195,7 @@ export default {
                     {{ item.lastname }}
                   </td>
                   <td class="border border-[#002F63] px-2">
-                    <!-- {{ item.dob.slice(0, 10).split('-').reverse().join('-')}}                                       -->
-                    {{ item.dateOfBirth }}
+                    {{ item.dob.slice(0, 10).split('-').reverse().join('-')}}                                      
                   </td>
                   <td class="border border-[#002F63] px-2">
                     {{ item.mobile_num }}
@@ -231,7 +249,7 @@ export default {
       <div class="pagination flex justify-around">
         <ul class="flex justify-center cursor-pointer">
           <li @click="previousPage" class="hover:bg-blue-500">Previous</li>
-          <li
+          <!-- <li
             v-for="page in totalPages"
             :key="page"
             @click="changePage(page)"
@@ -239,7 +257,17 @@ export default {
             class="hover:bg-blue-500"
           >
             {{ page }}
-          </li>
+          </li> -->
+          <li
+  v-for="page in visiblePages"
+  :key="page"
+  @click="changePage(page)"
+  :class="{ active: page === currentPage }"
+  class="hover:bg-blue-500"
+>
+  {{ page }}
+</li>
+
           <li @click="nextPage" class="hover:bg-blue-500">Next</li>
         </ul>
 

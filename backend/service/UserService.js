@@ -1,4 +1,10 @@
 import databaseConn from "../config/db.js";
+import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc.js';
+import timezone from "dayjs/plugin/timezone.js";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 /* === Create Request === */ 
 const createUserData = async (userData) => {
@@ -40,18 +46,10 @@ const createUserData = async (userData) => {
      try {
        const result = await databaseConn.query(sql, [search, limitNum, offset]);
 
-       const formattedRows = result.rows.map((row) => {
-         const dateOfBirth = new Date(row.dob);
-         const day = dateOfBirth.getDate().toString().padStart(2, "0");
-         const month = (dateOfBirth.getMonth() + 1).toString().padStart(2, "0");
-         const year = dateOfBirth.getFullYear();
-
-         return {
-           ...row,
-           dateOfBirth: `${day}-${month}-${year}`, 
-         };
-       });
-       console.log(result.rows)
+      const formattedRows = result.rows.map((row) => ({
+      ...row,
+      dob: dayjs(row.dob).tz("Asia/Kolkata").format(),
+    }));
 
        const countResult = await databaseConn.query(ResultCount, [search]);
        return {formattedRows, totalUsers: countResult.rows[0].count };
@@ -67,16 +65,13 @@ const createUserData = async (userData) => {
  const  getEditUser = async(id) => {
    const sql = "SELECT * FROM registration WHERE id = $1";
    try{
-    const result =  await databaseConn.query(sql, [id])
-     const formattedRows = result.rows.map(row => {
-      const dateOfBirth = new Date(row.dob);
-      const day = dateOfBirth.getDate().toString().padStart(2, '0');
-      const month = (dateOfBirth.getMonth() + 1).toString().padStart(2, '0');
-      const year = dateOfBirth.getFullYear();
-      row.dateOfBirth = `${day}-${month}-${year}`; 
-    });
-       console.log("Get Results all users",result.rows);
-       return result.rows;
+    const result =  await databaseConn.query(sql, [id]);
+    const formattedRows = result.rows.map((row) => ({
+      ...row,
+      dob: dayjs(row.dob).tz("Asia/Kolkata").format(),
+    }));
+       console.log("Get Results all users",formattedRows);
+      return formattedRows
      }catch(error) {
        console.error("Database query error:", error);
        throw new Error("Error in Getting Data")

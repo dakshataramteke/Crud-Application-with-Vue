@@ -34,11 +34,7 @@ export default {
       console.log("Response Edit ", response);
       this.formData.firstName = response.data.data[0].firstname;
       this.formData.lastName = response.data.data[0].lastname;
-      this.formData.dateOfBirth = response.data.data[0].dateOfBirth
-        .slice(0, 10)
-        .split("-")
-        .reverse()
-        .join("-");
+      this.formData.dateOfBirth = response.data.data[0].dob.slice(0, 10);
       this.formData.mobileNumber = response.data.data[0].mobile_num;
       this.formData.address = response.data.data[0].address;
     },

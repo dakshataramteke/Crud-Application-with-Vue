@@ -2,9 +2,9 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "nodemon --env-file=.env index.js"
+    "start": "dotenv -e .env -- nodemon --exec ts-node index.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +17,14 @@
     "joi": "^18.0.0",
     "nodemon": "^3.1.10",
     "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "@types/pg": "^8.15.5",
+    "dotenv-cli": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   }
 }

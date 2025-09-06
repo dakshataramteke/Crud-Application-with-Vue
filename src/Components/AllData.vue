@@ -1,17 +1,30 @@
-<script>
+<script lang="ts">
 import axios from "axios";
+import { defineComponent } from "vue";
+import Swal from 'sweetalert2';
 
-export default {
+export interface User {
+  id: number;
+  firstname: string;
+  lastname: string;
+  dob: string;
+  mobile_num: string;
+  address: string;
+}
+
+
+export default defineComponent({
   data() {
     return {
-      data: [],
+      data: [] as User[],
       search: "",
       isLoading: false,
       currentPage: 1,
       totalPages: 0,
-      limit: 3,
+      limit: 10,
       selectedSortBy: "",
       selectedOrder: "",
+      error: "" as string | null,
     };
   },
   methods: {
@@ -36,13 +49,13 @@ export default {
           this.isLoading = false;
         }, 2000);
       } catch (error) {
-        this.error = "There was an error fetching the data: " + error.message;
+        this.error = "There was an error fetching the data: " + (error as Error).message;
         this.isLoading = false;
       }
     },
 
     // Delete Data
-    async deleteItem(id) {
+    async deleteItem(id: number) {
       try {
         const response = await axios.delete(
           `http://localhost:3000/api/${id}/delete`
@@ -69,7 +82,7 @@ export default {
           }
         });
       } catch (error) {
-        this.error = "There was an error fetching the data: " + error.message;
+        this.error = "There was an error fetching the data: " +(error as Error).message;
       }
     },
 
@@ -95,7 +108,8 @@ export default {
         this.fetchData();
       }
     },
-    changePage(page) {
+    changePage(page: number) {
+      this.currentPage = page;
       this.fetchData();
     },
   },
@@ -127,7 +141,7 @@ computed: {
   mounted() {
     this.fetchData();
   },
-};
+});
 </script>
 <template>
   <!-- Table Data  -->

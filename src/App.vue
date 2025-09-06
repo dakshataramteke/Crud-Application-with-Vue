@@ -1,17 +1,19 @@
-<script>
-import { RouterView } from "vue-router";
+<script lang="ts">
+import { RouterView ,RouterLink} from "vue-router";
+import { defineComponent } from "vue";
 import CreateForm from "./Components/CreateForm.vue";
 import EditForm from "./Components/EditForm.vue";
 import AllData from "./Components/AllData.vue";
 import 'primeicons/primeicons.css';
 
-export default {
-  components:{
-      CreateForm,
-      AllData,
-      EditForm,
+export default defineComponent({
+  components: {
+    CreateForm,
+    AllData,
+    EditForm,
   },
-};
+}) ;
+
 </script>
 
 <template>
@@ -22,7 +24,7 @@ export default {
         <ul class="flex">
            <li>
             <RouterLink to="/users" class="text-white font-bold">
-              <span @filteredData="filteredData">Users</span></RouterLink
+              <span>Users</span></RouterLink
             >
           </li>
           <li>
@@ -62,8 +64,5 @@ span::after {
 }
 span:hover::after {
   width: 100%;
-}
-.search{
-  border:2px solid black;
 }
 </style>

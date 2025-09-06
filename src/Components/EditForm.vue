@@ -1,23 +1,40 @@
-<script>
+<script lang="ts">
 import axios from "axios";
-export default {
-  data() {
+import Swal from 'sweetalert2';
+import { defineComponent } from "vue";
+
+export interface Data {
+ showModel: boolean;
+ UpdateUserId: string;
+ formData:User
+}
+
+interface User {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  mobileNumber: string;
+  address: string;
+}
+export default defineComponent({
+  data(): Data {
     return {
       showModel: false,
       UpdateUserId: "",
       formData: {
-        firstName: "",
-        lastName: "",
-        dateOfBirth: "",
-        mobileNumber: "",
+        firstName: "" ,
+        lastName: ""  ,
+        dateOfBirth: "" ,
+        mobileNumber: "" ,
         address: "",
-      },
+      } as User
     };
   },
+ 
 
   mounted() {
-    this.UpdateUserId = this.$route.params.id;
-    this.getUserData(this.$route.params.id);
+    this.UpdateUserId = this.$route.params.id as string;
+    this.getUserData(this.$route.params.id as string);
   },
 
   methods: {
@@ -27,11 +44,11 @@ export default {
     },
 
     // Get Edit User
-    async getUserData(UserId) {
+    async getUserData(UserId : string) {
       const response = await axios.get(
         `http://localhost:3000/api/users/${UserId}/edit`
       );
-      console.log("Response Edit ", response);
+      // console.log("Response Edit ", response);
       this.formData.firstName = response.data.data[0].firstname;
       this.formData.lastName = response.data.data[0].lastname;
       this.formData.dateOfBirth = response.data.data[0].dob.slice(0, 10);
@@ -45,7 +62,7 @@ export default {
           `http://localhost:3000/api/users/${this.UpdateUserId}/edit`,
           this.formData
         );
-        console.log(response.data);
+        // console.log(response.data);
         Swal.fire({
           title: "Successfully",
           text: "Edit Successfully",
@@ -60,7 +77,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 <template>
   <!-- Edit Table  -->

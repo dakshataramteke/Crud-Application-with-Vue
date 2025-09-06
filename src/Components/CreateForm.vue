@@ -1,7 +1,32 @@
-<script>
+<script lang="ts">
 import axios from "axios";
-export default {
-  data() {
+import { defineComponent } from "vue";
+import Swal from 'sweetalert2';
+
+export interface Data {
+  showModel: boolean;
+  isLoading: boolean;
+  formData: User;
+  errors: Errors;
+}
+
+export interface User {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  mobileNumber: string;
+  address: string;
+}
+
+export interface Errors {
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  mobileNumber?: string;
+  address?: string;
+}
+export default defineComponent({
+  data(){
     return {
       showModel: false,
       isLoading: false,
@@ -11,12 +36,12 @@ export default {
         dateOfBirth: "",
         mobileNumber: "",
         address: "",
-      },
-      errors: [],
+      } as User,
+      errors: {} as Errors,
     };
   },
   methods: {
-    formatDate(dateStr) {
+    formatDate(dateStr:string) {
       return new Date(dateStr)
         .toISOString()
         .slice(0, 10)
@@ -25,8 +50,8 @@ export default {
         .join("-");
     },
     // Submitting the data
-    async handleSubmit() {
-      this.errors = [];
+     async handleSubmit(): Promise<void> {
+      this.errors = {};
       if (!this.formData.firstName) {
         this.errors.firstName = "First Name is Required";
       }
@@ -58,8 +83,6 @@ export default {
             this.formData
           );
 
-          console.log("Response is", this.formData);
-          console.log("Date is ", response.data);
           Swal.fire({
             title: "Successfully",
             text: "New User Created",
@@ -75,17 +98,16 @@ export default {
             mobileNumber: "",
             address: "",
           };
-           setTimeout(() => {
-          this.isLoading = false;
-        }, 2000);
         } catch (err) {
           console.error(err);
-        }
+        }finally {
+  this.isLoading = false;
+}
         
       }
     },
   },
-};
+});
 </script>
 <template>
   <!-- Registration Form  -->

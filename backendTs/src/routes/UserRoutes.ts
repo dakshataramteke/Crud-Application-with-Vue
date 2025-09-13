@@ -7,32 +7,25 @@ import {
   getEditUser,
   editUser,
   deleteUser,
-} from "../Controllers/UserControllers.ts";
-import validationSchema from "../middleware/Validation.ts";
+} from "../Controllers/UserControllers";
+import validationSchema from "../middleware/Validation";
+import { Users } from "../types/types";
 
-interface UserData {
-  name: string;
-  email: string;
-  age: number;
-}
-
-interface UserRequest extends Request {
-  body: UserData;
-}
 const userValidation = (
-  req: UserRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  console.log("USer Validation Working");
-  const { error, value } = validationSchema.validate(req.body);
+  const result:Users = req.body;
+  const { error, value } = validationSchema.validate(result);
+  // console.log("User Validation Working",result);
   if (error) {
     const errorMessage = error.details?.[0]?.message || "Validation error";
     return res.status(400).json({ error: errorMessage });
   } else {
-    console.log("Validation successful. Validated data:", value);
+    console.log(value)
     next();
-  }
+  } 
 };
 
 router.post("/users/create", userValidation, createUser);

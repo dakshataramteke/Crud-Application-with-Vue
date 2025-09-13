@@ -1,11 +1,12 @@
-import userService from "../service/UserService.ts";
+import userService from "../service/UserService";
 import type { Request, Response } from "express";
+import type { GetUsersParams, PaginationQuery, Users} from "../types/types";
 
 /* === Registration Form === */
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const userData = req.body;
+    const userData:Users = req.body;
     const createdUser = await userService.createUserData(userData);
 
     res.status(200).json({
@@ -24,24 +25,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 /* ==== Get All Users Data ==== */
 
-interface GetUsersParams {
-  query?: string;
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  order?: string;
-}
-
-interface GetUsersQuery {
-  query?: string;
-  page?: string;
-  limit?: string;
-  sortBy?: string;
-  order?: string;
-}
-
 export const getUsers = async (
-  req: Request<{}, {}, {}, GetUsersQuery>,
+  req: Request<{}, {}, {}, PaginationQuery>,
   res: Response
 ) => {
   try {
@@ -107,7 +92,7 @@ export const getEditUser = async (req: Request, res: Response) => {
 export const editUser = async (req: Request, res: Response) => {
   try {
     let { id } = req.params;
-    const userData = req.body;
+    const userData:Users = req.body;
     const userId = parseInt(id as string, 10);
 
     const editUser = await userService.editUser(userId, userData);

@@ -1,32 +1,12 @@
 <script lang="ts">
-import axios from "axios";
 import { defineComponent } from "vue";
-import Swal from 'sweetalert2';
+import axios from "axios";
+import Swal from "sweetalert2";
+import type { Users, Errors } from "../types/types";
 
-export interface Data {
-  showModel: boolean;
-  isLoading: boolean;
-  formData: User;
-  errors: Errors;
-}
-
-export interface User {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  mobileNumber: string;
-  address: string;
-}
-
-export interface Errors {
-  firstName?: string;
-  lastName?: string;
-  dateOfBirth?: string;
-  mobileNumber?: string;
-  address?: string;
-}
 export default defineComponent({
-  data(){
+  name: "User Form",
+  data() {
     return {
       showModel: false,
       isLoading: false,
@@ -36,12 +16,12 @@ export default defineComponent({
         dateOfBirth: "",
         mobileNumber: "",
         address: "",
-      } as User,
+      } as Users,
       errors: {} as Errors,
     };
   },
   methods: {
-    formatDate(dateStr:string) {
+    formatDate(dateStr: string): string {
       return new Date(dateStr)
         .toISOString()
         .slice(0, 10)
@@ -49,9 +29,9 @@ export default defineComponent({
         .reverse()
         .join("-");
     },
-    // Submitting the data
-     async handleSubmit(): Promise<void> {
+    async handleSubmit(): Promise<void> {
       this.errors = {};
+
       if (!this.formData.firstName) {
         this.errors.firstName = "First Name is Required";
       }
@@ -67,8 +47,9 @@ export default defineComponent({
       if (!this.formData.address) {
         this.errors.address = "Address is Required";
       }
+
       console.warn("Error", this.errors);
-      this.isLoading = true;
+
       if (
         this.formData.firstName &&
         this.formData.lastName &&
@@ -76,19 +57,21 @@ export default defineComponent({
         this.formData.mobileNumber &&
         this.formData.address
       ) {
+        this.isLoading = true;
         this.formData.dateOfBirth = this.formatDate(this.formData.dateOfBirth);
+
         try {
           const response = await axios.post(
             "http://localhost:3000/api/users/create",
             this.formData
           );
 
-          Swal.fire({
+          await Swal.fire({
             title: "Successfully",
             text: "New User Created",
             icon: "success",
-            iconColor:'#1a9922',
-            confirmButtonColor: '#0953B5'
+            iconColor: "#1a9922",
+            confirmButtonColor: "#0953B5",
           });
 
           this.formData = {
@@ -100,10 +83,9 @@ export default defineComponent({
           };
         } catch (err) {
           console.error(err);
-        }finally {
-  this.isLoading = false;
-}
-        
+        } finally {
+          this.isLoading = false;
+        }
       }
     },
   },

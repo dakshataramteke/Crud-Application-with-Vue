@@ -1,10 +1,12 @@
 <script lang="ts">
-import { RouterView ,RouterLink} from "vue-router";
+import { RouterView, RouterLink, useRoute,useRouter } from "vue-router";
 import { defineComponent } from "vue";
 import CreateForm from "./Components/CreateForm.vue";
 import EditForm from "./Components/EditForm.vue";
 import AllData from "./Components/AllData.vue";
-import 'primeicons/primeicons.css';
+import "primeicons/primeicons.css";
+import Swal from "sweetalert2";
+
 
 export default defineComponent({
   components: {
@@ -12,33 +14,67 @@ export default defineComponent({
     AllData,
     EditForm,
   },
-}) ;
+  
+  data(){
+    return{
+      isLogin: !!localStorage.getItem("token"),
 
+    }
+  },
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    return { router, route };
+  },
+  methods:{
+    logOut(){
+      const token = localStorage.removeItem("token");
+      console.log("Removed Token", token);
+      this.isLogin=false;
+      Swal.fire({
+              title: "Successfully",
+              text: "Logout",
+              icon: "success",
+              iconColor: "#1a9922",
+              confirmButtonColor: "#0953B5",
+            });
+      this.router.push("/login")
+    }
+  }
+});
 </script>
 
 <template>
   <header>
     <nav class="bg-blue-500">
       <div class="container flex items-center h-[60px]">
-
-        <ul class="flex">
-           <li>
+        <ul class="flex justify-between w-full">
+        <div class="flex">
+          <li class="list-none">
             <RouterLink to="/users" class="text-white font-bold">
               <span>Users</span></RouterLink
             >
           </li>
-          <li>
-            <RouterLink
-              to="/create"
-              class="mx-4 text-white font-bold"
-            >
+          <li class="list-none">
+            <RouterLink to="/create" class="mx-4 text-white font-bold">
               <span> Create</span></RouterLink
             >
           </li>
-          
-        </ul>
+        </div>
+
+        <div class="flex" >
+          <li class="list-none" v-if="!isLogin">
+            <RouterLink to="/login" class="mx-4 text-white font-bold">
+              <span>Login</span></RouterLink
+            >
+          </li>
+        
+          <li class="list-none cursor-pointer mx-4 text-white font-bold" @click="logOut" v-else>
+         <span>Log Out</span>
+          </li>
+        </div>
+            </ul>
       </div>
-     
     </nav>
   </header>
 

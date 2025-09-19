@@ -2,6 +2,7 @@ import databaseConn from "../config/db";
 import type { GetUsersParams, Users } from "../types/types";
 
 /* === Create Request === */
+
 const createUserData = async (userData: Users) => {
   const { firstName, lastName, dateOfBirth, mobileNumber, address } = userData;
   const sql = `INSERT INTO registration (first_name, last_name, date_of_birth, mobile_number, address) VALUES ($1, $2, $3, $4, $5) RETURNING *`;

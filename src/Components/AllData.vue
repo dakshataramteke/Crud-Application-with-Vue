@@ -52,7 +52,7 @@ export default defineComponent({
   },
   methods: {
     
-    formatDate(dateStr: string) {
+  formatDate(dateStr: string) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
   const dateString = d.toDateString(); 
@@ -65,6 +65,7 @@ export default defineComponent({
       this.isLoading = true;
       this.error = null;
       try {
+        const token= localStorage.getItem("token")
         const response = await axios.get("http://localhost:3000/api/users", {
           params: {
             query: this.search,
@@ -73,6 +74,10 @@ export default defineComponent({
             page: this.currentPage,
             limit: this.limit,
           },
+          headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization':`Bearer ${token}`
+                }
         });
         this.data = response.data.data.result;
         this.totalPages = Math.ceil(response.data.data.totalUsers / this.limit);
@@ -95,20 +100,35 @@ export default defineComponent({
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, delete it!",
         });
-
+        console.log("Sweetalert result",result)
         if (result.isConfirmed) {
-          const response = await axios.delete(`http://localhost:3000/api/${id}/delete`);
-          console.log(response.data);
+          const token = localStorage.getItem("token")
+          const response = await axios.delete(`http://localhost:3000/api/${id}/delete`, 
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            },
+        );
 
           await Swal.fire({
             title: "Deleted!",
-            text: "Your file has been deleted.",
+            text: "Your User has been deleted.",
             icon: "success",
             iconColor: "#dc143c",
             confirmButtonColor: "#0953B5",
           });
 
           this.fetchData();
+        }else{
+          Swal.fire({
+            title:'Cancel',
+            text:"Your Request is Cancel",
+            icon:'error',
+            iconColor:'#dc143c',
+            confirmButtonColor:'#0953b5'
+          })
         }
       } catch (err) {
         this.error = "There was an error fetching the data: " + (err as Error).message;

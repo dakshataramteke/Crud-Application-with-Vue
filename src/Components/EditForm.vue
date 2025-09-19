@@ -31,8 +31,15 @@ export default defineComponent({
     },
     async getUserData(UserId: string) {
       try {
+        const token = localStorage.getItem("token")
         const response = await axios.get(
-          `http://localhost:3000/api/users/${UserId}/edit`
+          `http://localhost:3000/api/users/${UserId}/edit`,
+          {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }
         );
         const data = response.data.data[0];
         this.formData.firstName = data.first_name;
@@ -46,9 +53,16 @@ export default defineComponent({
     },
     async updateUser () {
       try {
+        const token = localStorage.getItem("token");
         await axios.put(
           `http://localhost:3000/api/users/${this.UpdateUserId}/edit`,
-          this.formData
+          this.formData,
+           {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  }
         );
         Swal.fire({
           title: "Successfully",

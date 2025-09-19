@@ -1,0 +1,180 @@
+<script lang="ts">
+import axios from 'axios';
+import { defineComponent } from "vue";
+import type { login, LoginError } from "../../types/types";
+import Swal from "sweetalert2";
+import { useRouter, useRoute } from "vue-router";
+
+export default defineComponent({
+  data(){
+    return{
+    formData:{
+      email:'',
+      password:''
+    } as login,
+    errors:{} as LoginError
+  }
+  },
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    return { router, route };
+  },
+  methods:{
+
+  async handleSubmit(): Promise<void> {
+    this.errors = {};
+
+    if (!this.formData.email) {
+        this.errors.email = "Email is required";
+    }
+    if (!this.formData.password) {
+        this.errors.password = "Password is required";
+    }
+
+    if (this.formData.email && this.formData.password) {
+        try {
+            const response = await axios.post("http://localhost:3000/api/admin/login", this.formData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const token = response.data.token;
+            localStorage.setItem("token", token);
+            console.log("Frontend Data Token", token);
+             await Swal.fire({
+              title: "Successfully",
+              text: "Login Successful",
+              icon: "success",
+              iconColor: "#1a9922",
+              confirmButtonColor: "#0953B5",
+            });
+            this.router.push("/users");
+
+
+            this.formData = {
+                email: '',
+                password: ''
+            };
+        } catch (error: any) {
+            console.error("Login error:", error.response ? error.response.data : error.message);
+            if(error){
+              await Swal.fire({
+              title: "Error",
+              text: error.response?.data?.message || "Please Check Email and Password",
+              icon: "error",
+              iconColor: "#dc143c",
+              confirmButtonColor: "#0953B5",
+            });
+            }
+            console.log(error);
+                  }
+    }
+},
+
+
+  }
+  
+});
+</script>
+<template>
+    <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
+    <form @submit.prevent="handleSubmit">
+      <div class="container">
+        <div class="row flex">
+          <div class="login-img">
+            <img src="../../assets/login3.png" alt="" class="img">
+          </div>
+          <div class="form-wrapper bg-white p-5 shadow-xl-amber-50">
+            <h2 class="text-2xl font-bold text-center my-5 text-[#002F63]">
+              Login
+            </h2>
+
+            <div>
+              <label>Email <span class="text-red-700 ms-1">*</span></label
+              ><br />
+              <input
+                type="email"
+                v-model="formData.email"
+                class="border border-[#002F63] p-1 my-2 focus:outline-none w-full"
+              />
+              <p v-if="errors.email" class="text-red-500">
+                {{ errors.email }}
+              </p>
+            </div>
+
+            <div class="mt-2">
+              <label>Password <span class="text-red-700 ms-1">*</span></label
+              ><br />
+              <input
+                type="text"
+                v-model="formData.password"
+                class="border border-[#002F63] p-1 my-2 focus:outline-none w-full"
+              />
+              <p v-if="errors.password" class="text-red-500">
+                {{ errors.password }}
+              </p>
+            </div>
+      
+            <div class="flex justify-center">
+              <button
+                type="submit"
+                class="cursor-pointer bg-[#2b6abc] hover:bg-[#0953b5] text-white my-3"
+              >
+                Login
+              </button>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+</template>
+<style scoped>
+.container{
+    margin: 0 auto;
+}
+.container .row {
+  height: 90vh;
+}
+
+@media(max-width:768px){
+  .row{
+    flex-direction: column;
+  }
+}
+.login-img{
+  /* border:2px solid rgb(60, 184, 128); */
+  height:100%;
+  .img{
+    width: 100%;
+     height:100%;
+  }
+  
+}
+.form-wrapper {
+  /* border-radius: 10px; */
+  /* border:2px solid red; */
+  width: 50%;
+  height:100%;
+  padding: 6rem 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .form-wrapper {
+    width: 100%;
+     padding: 2rem 1.2rem;
+  }
+}
+
+.form-wrapper button {
+  padding: 0.75rem 1.25rem;
+  margin: 0.825rem 0;
+}
+
+/* ok Button Color  */
+div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm){
+  background-color: #2b6abc !important;
+}
+</style>

@@ -7,9 +7,11 @@ import {
   getEditUser,
   editUser,
   deleteUser,
-} from "../Controllers/UserControllers";
-import validationSchema from "../middleware/Validation";
+} from "../controllers/UserControllers";
+import validation  from "../middleware/Validation";
 import { Users } from "../types/types";
+
+/* === User Validations === */
 
 const userValidation = (
   req: Request,
@@ -17,7 +19,7 @@ const userValidation = (
   next: NextFunction
 ) => {
   const result:Users = req.body;
-  const { error, value } = validationSchema.validate(result);
+  const {error,value} = validation.usersSchema.validate(result);
   // console.log("User Validation Working",result);
   if (error) {
     const errorMessage = error.details?.[0]?.message || "Validation error";

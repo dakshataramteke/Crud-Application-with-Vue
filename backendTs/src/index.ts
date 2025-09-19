@@ -1,7 +1,9 @@
 import express from "express";
 const app = express();
 import cors from "cors"
-import UserRoutes from './routes/UserRoutes'
+import UserRoutes from './routes/UserRoutes';
+import AdminLogin from './routes/AdminRoutes';
+import authAdmin from './middleware/authAdmin';
 const PORT = process.env.PORT ;
 
 /* == Middleware == */
@@ -10,7 +12,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api",UserRoutes)
+
+app.use("/api",AdminLogin);
+app.use("/api",authAdmin,UserRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

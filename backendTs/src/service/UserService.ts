@@ -12,7 +12,7 @@ const createUserData = async (userData: Users) => {
     const result = await databaseConn.query(sql, values);
     return result.rows;
   } catch (error) {
-    console.error("Error executing query:", error);
+    console.error("Error executing query:", error as Error);
     throw new Error("Error inserting user data");
   }
 };
@@ -46,6 +46,7 @@ const getUsersData = async ({
 
   try {
     const result = await databaseConn.query(sql, [search, limitNum, offset]);
+    // console.log("The Asc result", result.rows);
     const countResult = await databaseConn.query(ResultCount, [search]);
     return { result:result.rows, totalUsers: countResult.rows[0].count };
   } catch (error) {
@@ -62,7 +63,7 @@ const getEditUser = async (id: number) => {
     const result = await databaseConn.query(sql, [id]);
     return result.rows;
   } catch (error) {
-    console.error("Database query error:", error);
+    console.error("Database query error:", error as Error);
     throw new Error("Error in Getting Data");
   }
 };
@@ -80,7 +81,7 @@ const editUser = async (id: number, userData: Users) => {
     const result = await databaseConn.query(sql, values);
     return result.rows;
   } catch (error) {
-    console.error("Error in executing query :", error);
+    console.error("Error in executing query :", error as Error);
     throw new Error("Error in Editing Data ");
   }
 };
@@ -92,7 +93,7 @@ const deleteUser = async (id: number) => {
     const result = await databaseConn.query(sql, [id]);
     console.log(result.rows);
   } catch (error) {
-    console.error("Database query error : ", error);
+    console.error("Database query error : ", error as Error);
     throw new Error("Error in Deleting Data");
   }
 };

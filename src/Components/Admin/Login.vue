@@ -1,84 +1,92 @@
 <script lang="ts">
 import axios from 'axios';
 import { defineComponent } from "vue";
-import type { login, LoginError } from "../../types/types";
+import type { login, LoginError } from "../../types/admin";
 import Swal from "sweetalert2";
 import { useRouter, useRoute } from "vue-router";
 
 export default defineComponent({
-  data(){
-    return{
-    formData:{
-      email:'',
-      password:''
-    } as login,
-    errors:{} as LoginError
-  }
+  data() {
+    return {
+      formData: {
+        email: '',
+        password: ''
+      } as login,
+      showPassword: false,
+      errors: {} as LoginError
+    }
   },
   setup() {
     const router = useRouter();
     const route = useRoute();
     return { router, route };
   },
-  methods:{
+  methods: {
+    // Toggle Password 
+    togglePassword() {
+      this.showPassword = !this.showPassword;
+      // console.log("Password works");
+    },
+    async handleSubmit(): Promise<void> {
+      this.errors = {};
 
-  async handleSubmit(): Promise<void> {
-    this.errors = {};
-
-    if (!this.formData.email) {
+      if (!this.formData.email) {
         this.errors.email = "Email is required";
-    }
-    if (!this.formData.password) {
+      }
+      if (!this.formData.password) {
         this.errors.password = "Password is required";
-    }
+      }
 
-    if (this.formData.email && this.formData.password) {
+      if (this.formData.email && this.formData.password) {
         try {
-            const response = await axios.post("http://localhost:3000/api/admin/login", this.formData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const token = response.data.token;
-            localStorage.setItem("token", token);
-            console.log("Frontend Data Token", token);
-             await Swal.fire({
-              title: "Successfully",
-              text: "Login Successful",
-              icon: "success",
-              iconColor: "#1a9922",
-              confirmButtonColor: "#0953B5",
-            });
-            this.router.push("/users");
+          const response = await axios.post("http://localhost:3000/api/admin/login", this.formData, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+           
+          });
+          console.log("Login Response", response)
+          const token = response.data.token;
+          localStorage.setItem("token", token);
+          await Swal.fire({
+            title: "Successfully",
+            text: "Login Successful",
+            icon: "success",
+            iconColor: "#1a9922",
+            confirmButtonColor: "#0953B5",
+          });
+          this.router.push("/users");
 
-
-            this.formData = {
-                email: '',
-                password: ''
-            };
-        } catch (error: any) {
-            console.error("Login error:", error.response ? error.response.data : error.message);
-            if(error){
-              await Swal.fire({
+          this.formData = {
+            email: '',
+            password: ''
+          };
+        } catch (error) {
+          if (error instanceof Error) {
+            //  console.error("Login error:", error.response ? error.response.data : error.message);
+             console.error("Login error:", error);
+          
+            await Swal.fire({
               title: "Error",
-              text: error.response?.data?.message || "Please Check Email and Password",
+              // text: error.response?.data?.message || "Please Check Email and Password",
+              text: "Please Check Email and Password",
               icon: "error",
               iconColor: "#dc143c",
               confirmButtonColor: "#0953B5",
             });
-            }
-            console.log(error);
-                  }
-    }
-},
+          }
+          console.log(error);
+        }
+      }
+    },
 
 
   }
-  
+
 });
 </script>
 <template>
-    <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
+  <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
     <form @submit.prevent="handleSubmit">
       <div class="container">
         <div class="row flex">
@@ -91,40 +99,34 @@ export default defineComponent({
             </h2>
 
             <div>
-              <label>Email <span class="text-red-700 ms-1">*</span></label
-              ><br />
-              <input
-                type="email"
-                v-model="formData.email"
-                class="border border-[#002F63] p-1 my-2 focus:outline-none w-full"
-              />
+              <label>Email <span class="text-red-700 ms-1">*</span></label><br />
+              <input type="email" v-model="formData.email"
+                class="border border-[#002F63] p-1 my-2 focus:outline-none w-full" />
               <p v-if="errors.email" class="text-red-500">
                 {{ errors.email }}
               </p>
             </div>
 
             <div class="mt-2">
-              <label>Password <span class="text-red-700 ms-1">*</span></label
-              ><br />
-              <input
-                type="text"
-                v-model="formData.password"
-                class="border border-[#002F63] p-1 my-2 focus:outline-none w-full"
-              />
+              <label>Password <span class="text-red-700 ms-1">*</span></label><br />
+              <div class="flex relative">
+                <input :type="showPassword ? 'text' : 'password'" v-model="formData.password"
+                  class="border border-[#002F63] p-1 my-2 focus:outline-none w-full" />
+                <i :class="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'" @click="togglePassword"></i>
+              </div>
+
+
               <p v-if="errors.password" class="text-red-500">
                 {{ errors.password }}
               </p>
             </div>
-      
+
             <div class="flex justify-center">
-              <button
-                type="submit"
-                class="cursor-pointer bg-[#2b6abc] hover:bg-[#0953b5] text-white my-3"
-              >
+              <button type="submit" class="cursor-pointer bg-[#2b6abc] hover:bg-[#0953b5] text-white my-3">
                 Login
               </button>
             </div>
-           
+
           </div>
         </div>
       </div>
@@ -132,39 +134,50 @@ export default defineComponent({
   </main>
 </template>
 <style scoped>
-.container{
-    margin: 0 auto;
+.container {
+  margin: 0 auto;
 }
+
 .container .row {
   height: 90vh;
 }
 
-@media(max-width:768px){
-  .row{
+@media(max-width:768px) {
+  .row {
     flex-direction: column;
   }
 }
-.login-img{
+
+.login-img {
   /* border:2px solid rgb(60, 184, 128); */
-  height:100%;
-  .img{
+  height: 100%;
+
+  .img {
     width: 100%;
-     height:100%;
+    height: 100%;
   }
-  
+
 }
+
 .form-wrapper {
-  /* border-radius: 10px; */
-  /* border:2px solid red; */
   width: 50%;
-  height:100%;
+  height: 100%;
   padding: 6rem 1.2rem;
+}
+
+/* Eye  */
+.pi {
+  position: absolute;
+  top: 30%;
+  right: 3%;
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
   .form-wrapper {
     width: 100%;
-     padding: 2rem 1.2rem;
+    padding: 2rem 1.2rem;
   }
 }
 
@@ -174,7 +187,7 @@ export default defineComponent({
 }
 
 /* ok Button Color  */
-div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm){
+div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm) {
   background-color: #2b6abc !important;
 }
 </style>

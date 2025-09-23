@@ -23,7 +23,7 @@ const userValidation = (
   // console.log("User Validation Working",result);
   if (error) {
     const errorMessage = error.details?.[0]?.message || "Validation error";
-    return res.status(400).json({ error: errorMessage });
+    return res.status(400).json({success:false, error: errorMessage });
   } else {
     console.log(value)
     next();

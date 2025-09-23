@@ -19,10 +19,10 @@ const auth = (req: CustomRequest, res: Response, next: NextFunction): void => {
             req.token = user;
             next();
         } else {
-            res.status(401).json({ message: 'No Token Provided' });
+            res.status(401).json({success:false, message: 'No Token Provided' });
         }
     } catch (error) {
-        res.status(403).json({ message: 'Invalid or expired token' });
+        res.status(403).json({success:false, message: 'Invalid or expired token' });
     }
 };
 

@@ -19,8 +19,6 @@ export default defineComponent({
     };
   },
   computed: {
-
-
     visiblePages(): number[] {
       const total = this.totalPages;
       const current = this.currentPage;
@@ -51,21 +49,16 @@ export default defineComponent({
     },
   },
   methods: {
-    
-  formatDate(dateStr: string) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  const dateString = d.toDateString(); 
-  const date = dateString.split(" "); 
-  return `${date[2]} ${date[1]} ${date[3]}`; 
 
+formatDate(dateStr:string): string{
+  return dateStr ? new Date(dateStr).toLocaleDateString("en-CA") : " ";
 },
   
     async fetchData() {
       this.isLoading = true;
       this.error = null;
       try {
-        const token= localStorage.getItem("token")
+        const token= localStorage.getItem("token");
         const response = await axios.get("http://localhost:3000/api/users", {
           params: {
             query: this.search,
@@ -79,6 +72,7 @@ export default defineComponent({
                     'Authorization':`Bearer ${token}`
                 }
         });
+        console.log("Frontend Response All Users",response);
         this.data = response.data.data.result;
         this.totalPages = Math.ceil(response.data.data.totalUsers / this.limit);
         setTimeout(() => {
@@ -100,14 +94,14 @@ export default defineComponent({
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, delete it!",
         });
-        console.log("Sweetalert result",result)
+        // console.log("Sweetalert result",result)
         if (result.isConfirmed) {
           const token = localStorage.getItem("token")
           const response = await axios.delete(`http://localhost:3000/api/${id}/delete`, 
             {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`,
               },
             },
         );
@@ -193,7 +187,7 @@ export default defineComponent({
             >
               <option value="">Select Sort By</option>
               <option value="first_name">First Name</option>
-              <option value="dob">Date of Birth</option>
+              <option value="date_of_birth">Date of Birth</option>
             </select>
 
             <select
@@ -231,13 +225,13 @@ export default defineComponent({
                   </td>
                   <td class="border border-[#002F63] px-2">
                     <!-- {{
-                      item.date_of_birth
+                      formatDate(item.date_of_birth
                         .slice(0, 10)
                         .split("-")
                         .reverse()
-                        .join("-")
+                        .join("-"))
                     }} -->
-{{ formatDate(item.date_of_birth) }}
+                {{ formatDate(item.date_of_birth) }}
                   </td>
                   <td class="border border-[#002F63] px-2">
                     {{ item.mobile_number }}

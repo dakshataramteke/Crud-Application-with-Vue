@@ -4,6 +4,7 @@ import cors from "cors"
 import UserRoutes from './routes/UserRoutes';
 import AdminLogin from './routes/AdminRoutes';
 import authAdmin from './middleware/authAdmin';
+import cookieParser from "cookie-parser";
 const PORT = process.env.PORT ;
 
 /* == Middleware == */
@@ -11,7 +12,7 @@ const PORT = process.env.PORT ;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser());
 
 app.use("/api",AdminLogin);
 app.use("/api",authAdmin,UserRoutes);

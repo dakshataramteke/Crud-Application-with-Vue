@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import AdminService from "../service/AdminService";
 import { Admin } from "../types/admin";
 
-
 /* === Create an account === */
 
 export const Register = async(req:Request, res:Response)=>{
@@ -31,6 +30,7 @@ console.log("Login Controller",req.body);
 try{
     const LoginData:Admin = req.body;
     const adminLogin = await AdminService.LoginAccount(LoginData);
+   
     res.status(200).json({
         success:true,
         message:"Login Successfully",

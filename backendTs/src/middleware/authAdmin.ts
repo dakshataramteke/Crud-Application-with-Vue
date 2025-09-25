@@ -1,29 +1,37 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-
+const JWT_SECRET = process.env.JWT_SECRET || 'crud_app';
 // token Interface
-interface CustomRequest extends Request {
-    token?: any; 
+// interface CustomRequest extends Request {
+//     admin?: any; 
+// }
+
+interface AnyRequest extends Request{
+    token?:any
 }
 
-const auth = (req: CustomRequest, res: Response, next: NextFunction): void => {
+export const authAdmin = (req: AnyRequest, res: Response, next: NextFunction): void => {
     try {
         // const bearerHeader = req.headers['authorization'];
-        const bearerHeader = req.headers.authorization;
-        console.log("Bearer Headers",bearerHeader);
+        // const bearerHeader = req.headers.authorization;
+        const token = req.cookies.token;
+       console.log("Auth Admin token ",token)
 
-        if (typeof bearerHeader !== 'undefined') {
-            const token = bearerHeader.split(' ')[1];
-            const user = jwt.verify(token, process.env.JWT_SECRET as string);
-            console.log("Verifying user",user);
-            req.token = user;
-            next();
-        } else {
-            res.status(401).json({success:false, message: 'No Token Provided' });
+       if(!token){
+        res.status(401).json({
+            success:false,
+            message: "Unauthorized User"
+        })
+    }
+     const decode = jwt.verify(token, JWT_SECRET as string);
+        if(!decode){
+          res.status(401).json({
+                message: "Authorization failed"
+            })
         }
+        next();
+
     } catch (error) {
         res.status(403).json({success:false, message: 'Invalid or expired token' });
     }
 };
-
-export default auth;

@@ -50,7 +50,7 @@ const LoginAccount = async (LoginData: Admin) => {
   const token = jwt.sign({ role: "admin" }, process.env.JWT_SECRET as string, {
     expiresIn: "1h",
   });
-
+ 
   return token;
 };
 

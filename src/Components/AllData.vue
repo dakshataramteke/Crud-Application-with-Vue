@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import axios from "axios";
+// import axios from "axios";
 import Swal from "sweetalert2";
 import type { User } from "../types/types";
+import api from '../axios';
 
 export default defineComponent({
   data() {
@@ -58,8 +59,8 @@ formatDate(dateStr:string): string{
       this.isLoading = true;
       this.error = null;
       try {
-        const token= localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/api/users", {
+        // const token= localStorage.getItem("token");
+        const response = await api.get("/users", {
           params: {
             query: this.search,
             sortBy: this.selectedSortBy,
@@ -69,7 +70,7 @@ formatDate(dateStr:string): string{
           },
           headers: {
                     'Content-Type': 'application/json',
-                    'Authorization':`Bearer ${token}`
+                    // 'Authorization':`Bearer ${token}`
                 }
         });
         console.log("Frontend Response All Users",response);
@@ -97,7 +98,7 @@ formatDate(dateStr:string): string{
         // console.log("Sweetalert result",result)
         if (result.isConfirmed) {
           const token = localStorage.getItem("token")
-          const response = await axios.delete(`http://localhost:3000/api/${id}/delete`, 
+          const response = await api.delete(`/${id}/delete`, 
             {
               headers: {
                 "Content-Type": "application/json",
@@ -224,13 +225,7 @@ formatDate(dateStr:string): string{
                     {{ item.last_name }}
                   </td>
                   <td class="border border-[#002F63] px-2">
-                    <!-- {{
-                      formatDate(item.date_of_birth
-                        .slice(0, 10)
-                        .split("-")
-                        .reverse()
-                        .join("-"))
-                    }} -->
+                 
                 {{ formatDate(item.date_of_birth) }}
                   </td>
                   <td class="border border-[#002F63] px-2">

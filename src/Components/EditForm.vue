@@ -1,10 +1,9 @@
 <script lang="ts">
-import axios from "axios";
 import Swal from "sweetalert2";
 import type { Users } from "../types/types";
 import { defineComponent } from "vue";
 import { useRouter, useRoute } from "vue-router";
-
+import api from '../axios';
 export default defineComponent({
   data() {
     return {
@@ -31,13 +30,13 @@ export default defineComponent({
     },
     async getUserData(UserId: string) {
       try {
-        const token = localStorage.getItem("token")
-        const response = await axios.get(
-          `http://localhost:3000/api/users/${UserId}/edit`,
+        // const token = localStorage.getItem("token")
+        const response = await api.get(
+          `users/${UserId}/edit`,
           {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      // 'Authorization': `Bearer ${token}`
     }
   }
         );
@@ -54,8 +53,8 @@ export default defineComponent({
     async updateUser () {
       try {
         const token = localStorage.getItem("token");
-        await axios.put(
-          `http://localhost:3000/api/users/${this.UpdateUserId}/edit`,
+        await api.put(
+          `users/${this.UpdateUserId}/edit`,
           this.formData,
            {
     headers: {

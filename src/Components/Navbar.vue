@@ -1,15 +1,11 @@
 <script lang="ts">
 import { RouterView, RouterLink, useRoute,useRouter } from "vue-router";
 import { defineComponent } from "vue";
-// import CreateForm from "./Components/CreateForm.vue";
-// import EditForm from "./Components/EditForm.vue";
-// import AllData from "./Components/AllData.vue";
 import CreateForm from "./CreateForm.vue";
 import EditForm from "./EditForm.vue";
 import AllData from "./AllData.vue";
 import "primeicons/primeicons.css";
 import Swal from "sweetalert2";
-
 
 export default defineComponent({
   components: {
@@ -17,18 +13,13 @@ export default defineComponent({
     AllData,
     EditForm,
   },
-  
-  data(){
-    return{
-      isLogin: !!localStorage.getItem("token"),
-    }
-  },
   setup() {
     const router = useRouter();
     const route = useRoute();
     return { router, route };
   },
   methods:{
+  
    logOut() {
  
     console.log(Swal);
@@ -50,7 +41,6 @@ export default defineComponent({
         iconColor: "#1a9922",
         confirmButtonColor: "#0953B5",
       }).then(() => {
-         localStorage.removeItem("token");
         this.router.push("/login");
       });
     }
@@ -73,20 +63,16 @@ export default defineComponent({
             >
           </li>
           <li class="list-none">
-            <RouterLink to="/create" class="mx-4 text-white font-bold">
+            <RouterLink to="/users/create" class="mx-4 text-white font-bold">
               <span> Create</span></RouterLink
             >
           </li>
+
+        
         </div>
 
-        <div class="flex" >
-          <!-- <li class="list-none" v-if="!isLogin">
-            <RouterLink to="/login" class="mx-4 text-white font-bold">
-              <span>Login</span></RouterLink
-            >
-          </li> -->
-      
-          <li class="list-none cursor-pointer mx-4 text-white font-bold" @click="logOut">
+        <div class="flex">
+                 <li class="list-none cursor-pointer mx-4 text-white font-bold" @click="logOut">
          <span>Log Out</span>
           </li>
         </div>

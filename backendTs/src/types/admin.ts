@@ -6,6 +6,7 @@ export interface Admin{
 }
 
 export interface JwtPayload{
+  adminId:number,
   email:string,
   password:string
 }

@@ -3,13 +3,16 @@ const app = express();
 import cors from "cors"
 import UserRoutes from './routes/UserRoutes';
 import AdminLogin from './routes/AdminRoutes';
-import authAdmin from './middleware/authAdmin';
+import { authAdmin } from "./middleware/authAdmin";
 import cookieParser from "cookie-parser";
 const PORT = process.env.PORT ;
 
 /* == Middleware == */
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true, 
+}))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

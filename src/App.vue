@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 import { RouterView, RouterLink, useRoute,useRouter } from "vue-router";
 import { defineComponent } from "vue";
 import CreateForm from "./Components/CreateForm.vue";
@@ -17,7 +17,7 @@ export default defineComponent({
   
   data(){
     return{
-      isLogin: !!localStorage.getItem("token"),
+      isLogin: false,
     }
   },
   setup() {
@@ -26,6 +26,7 @@ export default defineComponent({
     return { router, route };
   },
   methods:{
+  
    logOut() {
  
     console.log(Swal);
@@ -47,7 +48,7 @@ export default defineComponent({
         iconColor: "#1a9922",
         confirmButtonColor: "#0953B5",
       }).then(() => {
-         localStorage.removeItem("token");
+      this.isLogin=true;
         this.router.push("/login");
       });
     }
@@ -63,29 +64,29 @@ export default defineComponent({
     <nav class="bg-blue-500">
       <div class="container flex items-center h-[60px]">
         <ul class="flex justify-between w-full">
-        <div class="flex">
+        <div class="flex"  v-if="!isLogin">
           <li class="list-none">
             <RouterLink to="/users" class="text-white font-bold">
               <span>Users</span></RouterLink
             >
           </li>
           <li class="list-none">
-            <RouterLink to="/create" class="mx-4 text-white font-bold">
+            <RouterLink to="/users/create" class="mx-4 text-white font-bold">
               <span> Create</span></RouterLink
             >
           </li>
+
+            <li class="list-none cursor-pointer mx-4 text-white font-bold" @click="logOut">
+         <span>Log Out</span>
+          </li>
         </div>
 
-        <div class="flex" >
-          <li class="list-none" v-if="!isLogin">
+        <div class="flex" v-else>
+          <li class="list-none">
             <RouterLink to="/login" class="mx-4 text-white font-bold">
               <span>Login</span></RouterLink
             >
-          </li>
-      
-          <li class="list-none cursor-pointer mx-4 text-white font-bold" @click="logOut">
-         <span>Log Out</span>
-          </li>
+          </li>      
         </div>
             </ul>
       </div>
@@ -115,4 +116,19 @@ span::after {
 span:hover::after {
   width: 100%;
 }
-</style>
+</style> -->
+
+<template>
+  <div id="app">
+    <Login/>
+    <router-view></router-view>
+  </div>
+</template>
+
+<script>
+import Login from './Components/Admin/Login.vue';
+
+export default {
+  name: "App",
+};
+</script>

@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
 import AdminService from "../service/AdminService";
 import { Admin } from "../types/admin";
-
+// import { protectAdmin } from "../middleware/authAdmin";
+import { setCookie } from "../utils/cookies";
 /* === Create an account === */
 
 export const Register = async(req:Request, res:Response)=>{
@@ -26,15 +27,16 @@ export const Register = async(req:Request, res:Response)=>{
 /* === Login === */
 
 export const Login = async(req:Request,res:Response)=>{
-console.log("Login Controller",req.body);
+// console.log("Login Controller",req.body);
 try{
     const LoginData:Admin = req.body;
-    const adminLogin = await AdminService.LoginAccount(LoginData);
-   
+    const token = await AdminService.LoginAccount(LoginData);
+    setCookie(res,"token", token );
+    console.log("Backend Cookies is",token);
     res.status(200).json({
         success:true,
         message:"Login Successfully",
-        token:adminLogin
+        // token:token
     })
 }catch(error){
     console.error("Error in Login", error);
@@ -45,3 +47,6 @@ try{
 }
 }
 
+export const Token = async (req:Request,res:Response)=>{
+    res.clearCookie('token');
+}

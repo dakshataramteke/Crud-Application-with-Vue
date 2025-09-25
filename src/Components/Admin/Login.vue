@@ -1,10 +1,10 @@
 <script lang="ts">
-import axios from 'axios';
+// import axios from 'axios';
 import { defineComponent } from "vue";
 import type { login, LoginError } from "../../types/admin";
 import Swal from "sweetalert2";
 import { useRouter, useRoute } from "vue-router";
-
+import api from '../../axios'
 export default defineComponent({
   data() {
     return {
@@ -39,15 +39,13 @@ export default defineComponent({
 
       if (this.formData.email && this.formData.password) {
         try {
-          const response = await axios.post("http://localhost:3000/api/admin/login", this.formData, {
+          const response = await api.post("admin/login", this.formData, {
             headers: {
               'Content-Type': 'application/json'
             }
            
           });
           console.log("Login Response", response)
-          const token = response.data.token;
-          localStorage.setItem("token", token);
           await Swal.fire({
             title: "Successfully",
             text: "Login Successful",
@@ -55,7 +53,10 @@ export default defineComponent({
             iconColor: "#1a9922",
             confirmButtonColor: "#0953B5",
           });
+          if(response.data.success){
           this.router.push("/users");
+          }
+         
 
           this.formData = {
             email: '',
@@ -86,10 +87,10 @@ export default defineComponent({
 });
 </script>
 <template>
-  <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
+  <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-screen">
     <form @submit.prevent="handleSubmit">
       <div class="container">
-        <div class="row flex">
+        <div class="row flex h-screen">
           <div class="login-img">
             <img src="../../assets/login3.png" alt="" class="img">
           </div>
@@ -138,9 +139,9 @@ export default defineComponent({
   margin: 0 auto;
 }
 
-.container .row {
-  height: 90vh;
-}
+/* .container .row {
+  height: 100vh;
+}  */
 
 @media(max-width:768px) {
   .row {

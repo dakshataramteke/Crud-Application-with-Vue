@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import axios from "axios";
+// import axios from "axios";
 import Swal from "sweetalert2";
 import type { Users, Errors } from "../types/types";
+import api from '../axios';
 
 export default defineComponent({
   name: "User Form",
@@ -61,16 +62,16 @@ export default defineComponent({
         this.formData.dateOfBirth = this.formatDate(this.formData.dateOfBirth);
 
         try {
-          const token = localStorage.getItem("token");
-          const response = await axios.post(
-            "http://localhost:3000/api/users/create",
+          // const token = localStorage.getItem("token");
+          const response = await api.post(
+            "users/create",
             this.formData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${token}`,
-              },
-            }
+            // {
+            //   headers: {
+            //     "Content-Type": "application/json",
+            //     'Authorization': `Bearer ${token}`,
+            //   },
+            // }
           );
           if (response.status === 200) {
             await Swal.fire({

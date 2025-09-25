@@ -1,5 +1,4 @@
 <script lang="ts">
-// import axios from 'axios';
 import { defineComponent } from "vue";
 import type { login, LoginError } from "../../types/admin";
 import Swal from "sweetalert2";
@@ -80,8 +79,6 @@ export default defineComponent({
         }
       }
     },
-
-
   }
 
 });

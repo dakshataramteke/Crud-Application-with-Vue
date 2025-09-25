@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-// import axios from "axios";
 import Swal from "sweetalert2";
 import type { Users, Errors } from "../types/types";
 import api from '../axios';

@@ -8,7 +8,6 @@ import Navbar from "../src/Components/Navbar.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    // { path: "/", name: "login", component: Login },
     { path: "/login", name: "login", component: Login },
     { path: "/", redirect: "/login" },
     {
@@ -39,16 +38,4 @@ const router = createRouter({
   ],
 
 });
-
-// router.beforeEach((to, from, next) => {
-
-//   if (to.meta.requiresAuth) {
-//     next("/login");
-//   } else if (to.path === "/login") {
-//     next("/users"); 
-//   } else {
-//     next();
-//   }
-// });
-
 export default router;

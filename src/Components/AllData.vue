@@ -1,24 +1,69 @@
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
 import axios from "axios";
+import Swal from "sweetalert2";
+import type { User } from "../types/types";
 
-export default {
+export default defineComponent({
   data() {
     return {
-      data: [],
+      data: [] as User[],
       search: "",
       isLoading: false,
       currentPage: 1,
       totalPages: 0,
-      limit: 3,
+      limit: 10,
       selectedSortBy: "",
       selectedOrder: "",
+      error: null as string | null,
     };
   },
+  computed: {
+
+
+    visiblePages(): number[] {
+      const total = this.totalPages;
+      const current = this.currentPage;
+      const maxVisible = 3;
+      let start = Math.max(1, current - 1);
+      let end = Math.min(total, start + maxVisible - 1);
+
+      if (end - start + 1 < maxVisible) {
+        start = Math.max(1, end - maxVisible + 1);
+      }
+
+      const pages = [];
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      return pages;
+    },
+  },
+  watch: {
+    search() {
+      this.handleSearch();
+    },
+    selectedSortBy() {
+      this.handleFilterChange();
+    },
+    selectedOrder() {
+      this.handleFilterChange();
+    },
+  },
   methods: {
-    // Show All Data
+    
+    formatDate(dateStr: string) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  const dateString = d.toDateString(); 
+  const date = dateString.split(" "); 
+  return `${date[2]} ${date[1]} ${date[3]}`; 
+
+},
+  
     async fetchData() {
       this.isLoading = true;
-
+      this.error = null;
       try {
         const response = await axios.get("http://localhost:3000/api/users", {
           params: {
@@ -29,26 +74,19 @@ export default {
             limit: this.limit,
           },
         });
-        // this.data = response.data.data;
-        this.data = response.data.data.formattedRows;
+        this.data = response.data.data.result;
         this.totalPages = Math.ceil(response.data.data.totalUsers / this.limit);
         setTimeout(() => {
           this.isLoading = false;
         }, 2000);
-      } catch (error) {
-        this.error = "There was an error fetching the data: " + error.message;
+      } catch (err) {
+        this.error = "There was an error fetching the data: " + (err as Error).message;
         this.isLoading = false;
       }
     },
-
-    // Delete Data
-    async deleteItem(id) {
+    async deleteItem(id: number) {
       try {
-        const response = await axios.delete(
-          `http://localhost:3000/api/${id}/delete`
-        );
-        console.log(response.data);
-        Swal.fire({
+        const result = await Swal.fire({
           title: "Are you sure?",
           text: "Are you want to Delete",
           icon: "warning",
@@ -56,28 +94,30 @@ export default {
           confirmButtonColor: "#2b6abc",
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your file has been deleted.",
-              icon: "success",
-              iconColor: "#dc143c",
-              confirmButtonColor: "#0953B5",
-            });
-            this.fetchData();
-          }
         });
-      } catch (error) {
-        this.error = "There was an error fetching the data: " + error.message;
+
+        if (result.isConfirmed) {
+          const response = await axios.delete(`http://localhost:3000/api/${id}/delete`);
+          console.log(response.data);
+
+          await Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success",
+            iconColor: "#dc143c",
+            confirmButtonColor: "#0953B5",
+          });
+
+          this.fetchData();
+        }
+      } catch (err) {
+        this.error = "There was an error fetching the data: " + (err as Error).message;
       }
     },
-
     handleSearch() {
       this.currentPage = 1;
       this.fetchData();
     },
-
     handleFilterChange() {
       this.currentPage = 1;
       this.fetchData();
@@ -88,46 +128,21 @@ export default {
         this.fetchData();
       }
     },
-
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
         this.fetchData();
       }
     },
-    changePage(page) {
+    changePage(page: number) {
+      this.currentPage = page;
       this.fetchData();
     },
-  },
-computed: {
-  visiblePages() {
-    const total = this.totalPages;
-    const current = this.currentPage;
-    const maxVisible = 3;
-    let start = Math.max(1, current - 1);
-    let end = Math.min(total, start + maxVisible - 1);
-
-    if (end - start + 1 < maxVisible) {
-      start = Math.max(1, end - maxVisible + 1);
-    }
-
-    const pages = [];
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
-  }
-},
-
-  watch: {
-    search: "handleSearch",
-    selectedSortBy: "handleFilterChange",
-    selectedOrder: "handleFilterChange",
   },
   mounted() {
     this.fetchData();
   },
-};
+});
 </script>
 <template>
   <!-- Table Data  -->
@@ -149,7 +164,7 @@ computed: {
             <input
               type="search"
               v-model="search"
-              class="search"
+              class="border-2 border-white p-2 w-full"
               placeholder="Search by Firstname & Lastname"
             />
             <select
@@ -189,16 +204,23 @@ computed: {
                 <tr v-for="item in data" :key="item.id">
                   <td class="hidden">{{ item.id }}</td>
                   <td class="border border-[#002F63] px-2">
-                    {{ item.firstname }}
+                    {{ item.first_name }}
                   </td>
                   <td class="border border-[#002F63] px-2">
-                    {{ item.lastname }}
+                    {{ item.last_name }}
                   </td>
                   <td class="border border-[#002F63] px-2">
-                    {{ item.dob.slice(0, 10).split('-').reverse().join('-')}}                                      
+                    <!-- {{
+                      item.date_of_birth
+                        .slice(0, 10)
+                        .split("-")
+                        .reverse()
+                        .join("-")
+                    }} -->
+{{ formatDate(item.date_of_birth) }}
                   </td>
                   <td class="border border-[#002F63] px-2">
-                    {{ item.mobile_num }}
+                    {{ item.mobile_number }}
                   </td>
                   <td class="border border-[#002F63] px-2">
                     {{ item.address }}
@@ -248,25 +270,16 @@ computed: {
       <!-- Pagination  -->
       <div class="pagination flex justify-around">
         <ul class="flex justify-center cursor-pointer">
-          <li @click="previousPage" class="hover:bg-blue-500">Previous</li>
-          <!-- <li
-            v-for="page in totalPages"
+          <li @click="previousPage" class="hover:bg-blue-500 list-none">Previous</li>
+          <li
+            v-for="page in visiblePages"
             :key="page"
             @click="changePage(page)"
             :class="{ active: page === currentPage }"
             class="hover:bg-blue-500"
           >
             {{ page }}
-          </li> -->
-          <li
-  v-for="page in visiblePages"
-  :key="page"
-  @click="changePage(page)"
-  :class="{ active: page === currentPage }"
-  class="hover:bg-blue-500"
->
-  {{ page }}
-</li>
+          </li>
 
           <li @click="nextPage" class="hover:bg-blue-500">Next</li>
         </ul>
@@ -292,11 +305,6 @@ computed: {
 <style scoped>
 .container {
   margin: 0 auto;
-}
-.search {
-  border: 2px solid white;
-  padding: 8px;
-  width: 100%;
 }
 ::placeholder {
   color: white;

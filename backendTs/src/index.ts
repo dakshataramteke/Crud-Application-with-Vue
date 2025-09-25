@@ -1,8 +1,8 @@
 import express from "express";
 const app = express();
 import cors from "cors"
-import UserRoutes from './routes/UserRoutes.js'
-const PORT = process.env.PORT;
+import UserRoutes from './routes/UserRoutes'
+const PORT = process.env.PORT ;
 
 /* == Middleware == */
 

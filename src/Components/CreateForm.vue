@@ -1,6 +1,11 @@
-<script>
+<script lang="ts">
+import { defineComponent } from "vue";
 import axios from "axios";
-export default {
+import Swal from "sweetalert2";
+import type { Users, Errors } from "../types/types";
+
+export default defineComponent({
+  name: "User Form",
   data() {
     return {
       showModel: false,
@@ -11,12 +16,12 @@ export default {
         dateOfBirth: "",
         mobileNumber: "",
         address: "",
-      },
-      errors: [],
+      } as Users,
+      errors: {} as Errors,
     };
   },
   methods: {
-    formatDate(dateStr) {
+    formatDate(dateStr: string): string {
       return new Date(dateStr)
         .toISOString()
         .slice(0, 10)
@@ -24,9 +29,9 @@ export default {
         .reverse()
         .join("-");
     },
-    // Submitting the data
-    async handleSubmit() {
-      this.errors = [];
+    async handleSubmit(): Promise<void> {
+      this.errors = {};
+
       if (!this.formData.firstName) {
         this.errors.firstName = "First Name is Required";
       }
@@ -42,8 +47,9 @@ export default {
       if (!this.formData.address) {
         this.errors.address = "Address is Required";
       }
+
       console.warn("Error", this.errors);
-      this.isLoading = true;
+
       if (
         this.formData.firstName &&
         this.formData.lastName &&
@@ -51,21 +57,21 @@ export default {
         this.formData.mobileNumber &&
         this.formData.address
       ) {
+        this.isLoading = true;
         this.formData.dateOfBirth = this.formatDate(this.formData.dateOfBirth);
+
         try {
           const response = await axios.post(
             "http://localhost:3000/api/users/create",
             this.formData
           );
 
-          console.log("Response is", this.formData);
-          console.log("Date is ", response.data);
-          Swal.fire({
+          await Swal.fire({
             title: "Successfully",
             text: "New User Created",
             icon: "success",
-            iconColor:'#1a9922',
-            confirmButtonColor: '#0953B5'
+            iconColor: "#1a9922",
+            confirmButtonColor: "#0953B5",
           });
 
           this.formData = {
@@ -75,17 +81,15 @@ export default {
             mobileNumber: "",
             address: "",
           };
-           setTimeout(() => {
-          this.isLoading = false;
-        }, 2000);
         } catch (err) {
           console.error(err);
+        } finally {
+          this.isLoading = false;
         }
-        
       }
     },
   },
-};
+});
 </script>
 <template>
   <!-- Registration Form  -->

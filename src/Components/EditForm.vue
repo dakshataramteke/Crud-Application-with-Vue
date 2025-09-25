@@ -1,66 +1,73 @@
-<script>
+<script lang="ts">
 import axios from "axios";
-export default {
+import Swal from "sweetalert2";
+import type { Users } from "../types/types";
+import { defineComponent } from "vue";
+import { useRouter, useRoute } from "vue-router";
+
+export default defineComponent({
   data() {
     return {
-      showModel: false,
-      UpdateUserId: "",
+      showModel: false as boolean,
+      UpdateUserId: "" as string,
       formData: {
         firstName: "",
         lastName: "",
         dateOfBirth: "",
         mobileNumber: "",
         address: "",
-      },
+      } as Users,
     };
   },
-
-  mounted() {
-    this.UpdateUserId = this.$route.params.id;
-    this.getUserData(this.$route.params.id);
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    return { router, route };
   },
-
   methods: {
     closeForm() {
       this.showModel = false;
-      this.$router.push("/users");
+      this.router.push("/users");
     },
-
-    // Get Edit User
-    async getUserData(UserId) {
-      const response = await axios.get(
-        `http://localhost:3000/api/users/${UserId}/edit`
-      );
-      console.log("Response Edit ", response);
-      this.formData.firstName = response.data.data[0].firstname;
-      this.formData.lastName = response.data.data[0].lastname;
-      this.formData.dateOfBirth = response.data.data[0].dob.slice(0, 10);
-      this.formData.mobileNumber = response.data.data[0].mobile_num;
-      this.formData.address = response.data.data[0].address;
-    },
-
-    async updateUser() {
+    async getUserData(UserId: string) {
       try {
-        const response = await axios.put(
+        const response = await axios.get(
+          `http://localhost:3000/api/users/${UserId}/edit`
+        );
+        const data = response.data.data[0];
+        this.formData.firstName = data.first_name;
+        this.formData.lastName = data.last_name;
+        this.formData.dateOfBirth = data.date_of_birth.slice(0, 10);
+        this.formData.mobileNumber = data.mobile_number;
+        this.formData.address = data.address;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async updateUser () {
+      try {
+        await axios.put(
           `http://localhost:3000/api/users/${this.UpdateUserId}/edit`,
           this.formData
         );
-        console.log(response.data);
         Swal.fire({
           title: "Successfully",
           text: "Edit Successfully",
           icon: "success",
-          iconColor:'#1a9922',
-          confirmButtonColor: '#0953B5'
-       
+          iconColor: "#1a9922",
+          confirmButtonColor: "#0953B5",
         });
-        this.$router.push("/users");
+        this.router.push("/users");
       } catch (err) {
         console.error(err);
       }
     },
   },
-};
+  mounted() {
+    this.UpdateUserId = this.route.params.id as string;
+    this.getUserData(this.UpdateUserId);
+  },
+});
 </script>
 <template>
   <!-- Edit Table  -->

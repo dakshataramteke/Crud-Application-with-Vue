@@ -4,6 +4,7 @@ export default {
   data() {
     return {
       showModel: false,
+      isLoading: false,
       formData: {
         firstName: "",
         lastName: "",
@@ -42,7 +43,7 @@ export default {
         this.errors.address = "Address is Required";
       }
       console.warn("Error", this.errors);
-
+      this.isLoading = true;
       if (
         this.formData.firstName &&
         this.formData.lastName &&
@@ -61,7 +62,7 @@ export default {
           console.log("Date is ", response.data);
           Swal.fire({
             title: "Successfully",
-            text: "Form is Submitted",
+            text: "New User Created",
             icon: "success",
             iconColor:'#1a9922',
             confirmButtonColor: '#0953B5'
@@ -74,9 +75,13 @@ export default {
             mobileNumber: "",
             address: "",
           };
+           setTimeout(() => {
+          this.isLoading = false;
+        }, 2000);
         } catch (err) {
           console.error(err);
         }
+        
       }
     },
   },
@@ -84,7 +89,7 @@ export default {
 </script>
 <template>
   <!-- Registration Form  -->
-  <main class="bg-[#002F63] min-h-[calc(100vh-60px)]">
+  <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
     <form @submit.prevent="handleSubmit">
       <div class="container py-3">
         <div class="row">

@@ -3,6 +3,7 @@ import { RouterView } from "vue-router";
 import CreateForm from "./Components/CreateForm.vue";
 import EditForm from "./Components/EditForm.vue";
 import AllData from "./Components/AllData.vue";
+import 'primeicons/primeicons.css';
 
 export default {
   components:{

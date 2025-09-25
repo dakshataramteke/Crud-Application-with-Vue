@@ -34,11 +34,7 @@ export default {
       console.log("Response Edit ", response);
       this.formData.firstName = response.data.data[0].firstname;
       this.formData.lastName = response.data.data[0].lastname;
-      this.formData.dateOfBirth = response.data.data[0].dateOfBirth
-        .slice(0, 10)
-        .split("-")
-        .reverse()
-        .join("-");
+      this.formData.dateOfBirth = response.data.data[0].dob.slice(0, 10);
       this.formData.mobileNumber = response.data.data[0].mobile_num;
       this.formData.address = response.data.data[0].address;
     },
@@ -68,7 +64,7 @@ export default {
 </script>
 <template>
   <!-- Edit Table  -->
-  <main class="bg-[#002F63] min-h-[calc(100vh-60px)]">
+  <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
     <div class="EditTable">
       <form @submit.prevent="updateUser">
         <div class="container py-3">

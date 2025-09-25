@@ -1,4 +1,4 @@
-const {Client} = require("pg");
+import { Client } from "pg";
 
 const databaseConn = new Client({
     user: process.env.DB_USER,
@@ -9,5 +9,6 @@ const databaseConn = new Client({
 })
 databaseConn.connect();
 
-module.exports = databaseConn;
+export default databaseConn;
+
 

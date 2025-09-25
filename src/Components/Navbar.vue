@@ -1,6 +1,7 @@
 <script lang="ts">
 import { RouterView, RouterLink, useRoute,useRouter } from "vue-router";
 import { defineComponent } from "vue";
+import api from '../axios';
 import CreateForm from "./CreateForm.vue";
 import EditForm from "./EditForm.vue";
 import AllData from "./AllData.vue";
@@ -19,33 +20,17 @@ export default defineComponent({
     return { router, route };
   },
   methods:{
-  
-   logOut() {
- 
-    console.log(Swal);
+  async logOut(){
+  const response = api.post("/admin/logout");
+  console.log(response);
   Swal.fire({
-    title: "Are you sure?",
-    text: "Do you want to Log Out !",
-    icon: "warning",
-    showCancelButton: true,
+  title: "Successfully",
+  text: "Log out Successfully!",
+  icon: "success",
+   iconColor: "#1a9922",
     confirmButtonColor: "#0953B5",
-    cancelButtonColor: "#d33",
-    iconColor: "red",
-    confirmButtonText: "Yes, Log Out!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Successfully!",
-        text: "Log Out Successfully",
-        icon: "success",
-        iconColor: "#1a9922",
-        confirmButtonColor: "#0953B5",
-      }).then(() => {
-        this.router.push("/login");
-      });
-    }
-  });
-
+});
+  this.router.push("/login");
 }
   }
 });

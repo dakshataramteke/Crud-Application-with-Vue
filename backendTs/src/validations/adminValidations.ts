@@ -3,6 +3,7 @@ import validation from '../middleware/Validation';
 import { Admin } from "../types/admin";
 
 /* === Admin Validations === */
+
 export const adminValidation = (
   req: Request,
   res: Response,

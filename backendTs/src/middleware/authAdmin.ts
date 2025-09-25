@@ -1,37 +1,38 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-const JWT_SECRET = process.env.JWT_SECRET || 'crud_app';
-// token Interface
-// interface CustomRequest extends Request {
-//     admin?: any; 
-// }
+import { decryptToken} from '../utils/crypto';
+const JWT_SECRET = process.env.JWT_SECRET ;
+import { JwtPayload } from "jsonwebtoken";
 
-interface AnyRequest extends Request{
-    token?:any
+
+interface CustomRequest extends Request {
+    token?: string | JwtPayload; 
 }
 
-export const authAdmin = (req: AnyRequest, res: Response, next: NextFunction): void => {
+export const authAdmin = (req:CustomRequest, res: Response, next: NextFunction): void => {
     try {
-        // const bearerHeader = req.headers['authorization'];
-        // const bearerHeader = req.headers.authorization;
-        const token = req.cookies.token;
-       console.log("Auth Admin token ",token)
-
-       if(!token){
+        const encryptToken:string = req.cookies.token;
+    //    console.log(" Cookies of Auth Admin is ",token)   
+       if(!encryptToken){
         res.status(401).json({
             success:false,
             message: "Unauthorized User"
         })
     }
-     const decode = jwt.verify(token, JWT_SECRET as string);
+     const decrypt = decryptToken(encryptToken);
+         console.log("Decrypt Code ", decrypt);
+     const decode = jwt.verify(decrypt, JWT_SECRET as string);
         if(!decode){
           res.status(401).json({
-                message: "Authorization failed"
+            success:false,
+            message: "Authorization failed"
             })
         }
+        req.token = decode;
         next();
 
     } catch (error) {
+        console.log("The Auth error is ", error)
         res.status(403).json({success:false, message: 'Invalid or expired token' });
     }
 };

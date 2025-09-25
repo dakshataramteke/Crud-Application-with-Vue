@@ -61,16 +61,9 @@ export default defineComponent({
         this.formData.dateOfBirth = this.formatDate(this.formData.dateOfBirth);
 
         try {
-          // const token = localStorage.getItem("token");
           const response = await api.post(
             "users/create",
             this.formData,
-            // {
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //     'Authorization': `Bearer ${token}`,
-            //   },
-            // }
           );
           if (response.status === 200) {
             await Swal.fire({
@@ -89,8 +82,8 @@ export default defineComponent({
           };
           } 
         } catch (err) {
-          console.error(err);
-          if(err){
+          console.error(err as Error);
+          if(err as Error){
             await Swal.fire({
               title: "Error",
               text: "Please Login First",

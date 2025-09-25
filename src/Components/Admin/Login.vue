@@ -3,7 +3,8 @@ import { defineComponent } from "vue";
 import type { login, LoginError } from "../../types/admin";
 import Swal from "sweetalert2";
 import { useRouter, useRoute } from "vue-router";
-import api from '../../axios'
+import api from '../../axios';
+
 export default defineComponent({
   data() {
     return {
@@ -24,8 +25,7 @@ export default defineComponent({
     // Toggle Password 
     togglePassword() {
       this.showPassword = !this.showPassword;
-      // console.log("Password works");
-    },
+        },
     async handleSubmit(): Promise<void> {
       this.errors = {};
 
@@ -38,12 +38,7 @@ export default defineComponent({
 
       if (this.formData.email && this.formData.password) {
         try {
-          const response = await api.post("admin/login", this.formData, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-           
-          });
+          const response = await api.post("admin/login", this.formData);
           console.log("Login Response", response)
           await Swal.fire({
             title: "Successfully",
@@ -56,13 +51,12 @@ export default defineComponent({
           this.router.push("/users");
           }
          
-
           this.formData = {
             email: '',
             password: ''
           };
         } catch (error) {
-          if (error instanceof Error) {
+          if (error as Error) {
             //  console.error("Login error:", error.response ? error.response.data : error.message);
              console.error("Login error:", error);
           
@@ -75,7 +69,7 @@ export default defineComponent({
               confirmButtonColor: "#0953B5",
             });
           }
-          console.log(error);
+          console.log(error as Error);
         }
       }
     },
@@ -136,10 +130,6 @@ export default defineComponent({
   margin: 0 auto;
 }
 
-/* .container .row {
-  height: 100vh;
-}  */
-
 @media(max-width:768px) {
   .row {
     flex-direction: column;
@@ -154,7 +144,6 @@ export default defineComponent({
     width: 100%;
     height: 100%;
   }
-
 }
 
 .form-wrapper {

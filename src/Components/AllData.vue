@@ -58,7 +58,6 @@ formatDate(dateStr:string): string{
       this.isLoading = true;
       this.error = null;
       try {
-        // const token= localStorage.getItem("token");
         const response = await api.get("/users", {
           params: {
             query: this.search,
@@ -67,10 +66,6 @@ formatDate(dateStr:string): string{
             page: this.currentPage,
             limit: this.limit,
           },
-          headers: {
-                    'Content-Type': 'application/json',
-                    // 'Authorization':`Bearer ${token}`
-                }
         });
         console.log("Frontend Response All Users",response);
         this.data = response.data.data.result;
@@ -94,16 +89,8 @@ formatDate(dateStr:string): string{
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, delete it!",
         });
-        // console.log("Sweetalert result",result)
         if (result.isConfirmed) {
-          const token = localStorage.getItem("token")
           const response = await api.delete(`/${id}/delete`, 
-            {
-              headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${token}`,
-              },
-            },
         );
 
           await Swal.fire({
@@ -178,7 +165,7 @@ formatDate(dateStr:string): string{
             <input
               type="search"
               v-model="search"
-              class="border-2 border-white p-2 w-full"
+              class="border-2 border-white p-2 w-full text-white"
               placeholder="Search by Firstname & Lastname"
             />
             <select

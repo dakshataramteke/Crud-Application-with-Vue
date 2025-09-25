@@ -1,11 +1,11 @@
 import { Response } from 'express';
 
-export const setCookie = (res: Response, name: string, value: string, options = {}) => {
+export const setCookie = (res: Response, name: string, value: string) => {
   res.cookie(name, value, {
     httpOnly: true,
     secure:false,
     sameSite:"lax",
     path:"/",
-    maxAge: 60 * 60 * 24 * 4, 
+    maxAge:1000 * 60 * 60 * 24 * 1, 
   });
 };

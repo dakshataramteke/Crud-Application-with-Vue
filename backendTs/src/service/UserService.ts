@@ -87,6 +87,7 @@ const editUser = async (id: number, userData: Users) => {
 };
 
 /* === Delete User === */
+
 const deleteUser = async (id: number) => {
   const sql = "DELETE FROM registration WHERE id = $1";
   try {

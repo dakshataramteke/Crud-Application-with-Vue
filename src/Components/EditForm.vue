@@ -1,9 +1,9 @@
 <script lang="ts">
-import axios from "axios";
 import Swal from "sweetalert2";
 import type { Users } from "../types/types";
 import { defineComponent } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import api from '../axios';
 
 export default defineComponent({
   data() {
@@ -31,8 +31,8 @@ export default defineComponent({
     },
     async getUserData(UserId: string) {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/users/${UserId}/edit`
+        const response = await api.get(
+          `users/${UserId}/edit`,
         );
         const data = response.data.data[0];
         this.formData.firstName = data.first_name;
@@ -41,14 +41,14 @@ export default defineComponent({
         this.formData.mobileNumber = data.mobile_number;
         this.formData.address = data.address;
       } catch (error) {
-        console.error(error);
+        console.error(error as Error);
       }
     },
     async updateUser () {
       try {
-        await axios.put(
-          `http://localhost:3000/api/users/${this.UpdateUserId}/edit`,
-          this.formData
+        await api.put(
+          `users/${this.UpdateUserId}/edit`,
+          this.formData,
         );
         Swal.fire({
           title: "Successfully",
@@ -59,7 +59,7 @@ export default defineComponent({
         });
         this.router.push("/users");
       } catch (err) {
-        console.error(err);
+        console.error(err as Error);
       }
     },
   },

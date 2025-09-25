@@ -16,7 +16,7 @@ export interface Data {
   errors: Errors;
 }
 
-// Errors 
+// Users Errors 
 export interface Errors {
   firstName?: string;
   lastName?: string;

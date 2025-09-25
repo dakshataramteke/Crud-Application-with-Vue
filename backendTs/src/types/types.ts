@@ -24,4 +24,3 @@ export interface Users {
   mobileNumber :string,
   address:string
 }
-

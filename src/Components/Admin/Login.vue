@@ -47,8 +47,12 @@ export default defineComponent({
             iconColor: "#1a9922",
             confirmButtonColor: "#0953B5",
           });
+            const role:string = response.data.roleData;
+          console.log("The Role of Login", role)
           if(response.data.success){
+           
           this.router.push("/users");
+            // this.router.push({ path: "/users", query: { role } });
           }
          
           this.formData = {

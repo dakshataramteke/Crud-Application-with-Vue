@@ -1,12 +1,12 @@
 import databaseConn from "../config/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Admin } from "../types/admin";
+import { Admin, LoginAdmin } from "../types/admin";
 
 /* === Create an Account === */
 
 const createAccount = async (adminData: Admin) => {
-  const { email, password } = adminData;
+  const { email, password, role } = adminData;
   const checkExisting = `SELECT * FROM admin WHERE email = $1`;
   try {
     const existingResult = await databaseConn.query(checkExisting, [email]);
@@ -19,11 +19,11 @@ const createAccount = async (adminData: Admin) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const sql = `
-      INSERT INTO admin ( email, password)
-      VALUES ($1, $2)
+      INSERT INTO admin ( email, password, role)
+      VALUES ($1, $2, $3)
       RETURNING *
     `;
-    const values = [email, hashedPassword];
+    const values = [email, hashedPassword, role];
 
     const result = await databaseConn.query(sql, values);
     return result.rows[0];
@@ -35,7 +35,7 @@ const createAccount = async (adminData: Admin) => {
 
 /* === Login a Account === */
 
-const LoginAccount = async (LoginData: Admin) => {
+const LoginAccount = async (LoginData: LoginAdmin) => {
   const { email, password } = LoginData;
   const userQuery = `SELECT * FROM admin WHERE email = $1`;
   const result = await databaseConn.query(userQuery, [email]);
@@ -43,15 +43,16 @@ const LoginAccount = async (LoginData: Admin) => {
     throw new Error("User  Not Found");
   }
   const user = result.rows[0];
+  console.log("Database Users Data in Login Account", user)
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     throw new Error("Invalid Password");
   }
-  const token = jwt.sign({ role: "admin" }, process.env.JWT_SECRET as string, {
+  const token = jwt.sign({ email:result.rows[0]?.email }, process.env.JWT_SECRET as string, {
     expiresIn: "1h",
   });
- 
-  return token;
+//  console.log("JWT sign token", result.rows[0]?.email)
+  return {token, user};
 };
 
 export default {

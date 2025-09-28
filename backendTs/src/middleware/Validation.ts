@@ -15,7 +15,12 @@ address:Joi.string().required()
 
 const adminSchema = Joi.object({
 email:Joi.string().required(),
-password:Joi.string().required()
+password:Joi.string().required(),
+role:Joi.string().required()
 })
 
-export default {usersSchema, adminSchema};
+const loginSchema = Joi.object({
+email:Joi.string().required(),
+password:Joi.string().required()
+})
+export default {usersSchema, adminSchema, loginSchema};

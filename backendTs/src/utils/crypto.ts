@@ -3,6 +3,8 @@ import crypto from "crypto";
 const ALGO = "aes-256-gcm";
  const SECRET = crypto.scryptSync(process.env.SECRET!, "salt", 32);
 
+ /* === Encrypt === */
+
 export const encryptToken = (token: string): string => {
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(ALGO, SECRET, iv);
@@ -12,6 +14,8 @@ export const encryptToken = (token: string): string => {
 
   return Buffer.concat([iv, authTag, encrypted]).toString("base64url");
 }
+
+/* === Decrypt Token === */
 
 export const decryptToken = (encrypted: string): string => {
   const buf = Buffer.from(encrypted, "base64url");

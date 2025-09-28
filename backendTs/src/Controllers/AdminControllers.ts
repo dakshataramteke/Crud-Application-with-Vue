@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import AdminService from "../service/AdminService";
-import { Admin } from "../types/admin";
+import { Admin, LoginAdmin } from "../types/admin";
 import { setCookie } from "../utils/cookies";
 import { encryptToken } from "../utils/crypto";
 
@@ -28,24 +28,28 @@ export const Register = async (req: Request, res: Response) => {
 /* === Login === */
 
 export const Login = async (req: Request, res: Response) => {
-  // console.log("Login Controller",req.body);
   try {
-    const LoginData: Admin = req.body;
-    const token = await AdminService.LoginAccount(LoginData);
+    const LoginData: LoginAdmin = req.body;
+    // console.log("Login Data is ", LoginData)
+    const {token,user} = await AdminService.LoginAccount(LoginData);
+    const roleData = user.role
+    console.log("Users of Main Login Data result",roleData);
     const encrypt = encryptToken(token);
-    console.log("Encrypt Token ", encrypt);
     // set cookies from utils
     setCookie(res, "token", encrypt);
-    // console.log("Backend Cookies is",token);
+    // console.log("Backend Cookies is",encrypt);
     res.status(200).json({
       success: true,
       message: "Login Successfully",
+      roleData
+      
     });
   } catch (error) {
     console.error("Error in Login", error as Error);
     res.status(500).json({
       success: false,
       message: (error as Error).message,
+    
     });
   }
 };

@@ -13,19 +13,22 @@ export default defineComponent({
         password: ''
       } as login,
       showPassword: false,
+       role: "",
+      permissions: [] as string[],
       errors: {} as LoginError
     }
   },
   setup() {
+      
     const router = useRouter();
     const route = useRoute();
-    return { router, route };
+    return { router, route};
   },
   methods: {
     // Toggle Password 
     togglePassword() {
       this.showPassword = !this.showPassword;
-        },
+    },
     async handleSubmit(): Promise<void> {
       this.errors = {};
 
@@ -39,7 +42,7 @@ export default defineComponent({
       if (this.formData.email && this.formData.password) {
         try {
           const response = await api.post("admin/login", this.formData);
-          console.log("Login Response", response)
+          // console.log("Login Response", response)
           await Swal.fire({
             title: "Successfully",
             text: "Login Successful",
@@ -47,14 +50,12 @@ export default defineComponent({
             iconColor: "#1a9922",
             confirmButtonColor: "#0953B5",
           });
-            const role:string = response.data.roleData;
-          console.log("The Role of Login", role)
-          if(response.data.success){
-           
-          this.router.push("/users");
-            // this.router.push({ path: "/users", query: { role } });
-          }
-         
+
+          if (response.data.success) {
+            const roleName: string = response.data.roleData;
+         console.log("Role saved in store:", roleName);
+           this.router.push("/users")
+}
           this.formData = {
             email: '',
             password: ''
@@ -62,8 +63,8 @@ export default defineComponent({
         } catch (error) {
           if (error as Error) {
             //  console.error("Login error:", error.response ? error.response.data : error.message);
-             console.error("Login error:", error);
-          
+            console.error("Login error:", error);
+
             await Swal.fire({
               title: "Error",
               // text: error.response?.data?.message || "Please Check Email and Password",

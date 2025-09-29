@@ -35,6 +35,7 @@ const createAccount = async (adminData: Admin) => {
 
 /* === Login a Account === */
 
+
 const LoginAccount = async (LoginData: LoginAdmin) => {
   const { email, password } = LoginData;
   const userQuery = `SELECT * FROM admin WHERE email = $1`;

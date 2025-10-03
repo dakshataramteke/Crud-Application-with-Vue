@@ -2,6 +2,7 @@ import databaseConn from "../config/db";
 import type { GetUsersParams, Users } from "../types/types";
 
 /* === Create Request === */
+
 const createUserData = async (userData: Users) => {
   const { firstName, lastName, dateOfBirth, mobileNumber, address } = userData;
   const sql = `INSERT INTO registration (first_name, last_name, date_of_birth, mobile_number, address) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
@@ -11,7 +12,7 @@ const createUserData = async (userData: Users) => {
     const result = await databaseConn.query(sql, values);
     return result.rows;
   } catch (error) {
-    console.error("Error executing query:", error);
+    console.error("Error executing query:", error as Error);
     throw new Error("Error inserting user data");
   }
 };
@@ -45,6 +46,7 @@ const getUsersData = async ({
 
   try {
     const result = await databaseConn.query(sql, [search, limitNum, offset]);
+    // console.log("The Asc result", result.rows);
     const countResult = await databaseConn.query(ResultCount, [search]);
     return { result:result.rows, totalUsers: countResult.rows[0].count };
   } catch (error) {
@@ -61,7 +63,7 @@ const getEditUser = async (id: number) => {
     const result = await databaseConn.query(sql, [id]);
     return result.rows;
   } catch (error) {
-    console.error("Database query error:", error);
+    console.error("Database query error:", error as Error);
     throw new Error("Error in Getting Data");
   }
 };
@@ -79,19 +81,20 @@ const editUser = async (id: number, userData: Users) => {
     const result = await databaseConn.query(sql, values);
     return result.rows;
   } catch (error) {
-    console.error("Error in executing query :", error);
+    console.error("Error in executing query :", error as Error);
     throw new Error("Error in Editing Data ");
   }
 };
 
 /* === Delete User === */
+
 const deleteUser = async (id: number) => {
   const sql = "DELETE FROM registration WHERE id = $1";
   try {
     const result = await databaseConn.query(sql, [id]);
     console.log(result.rows);
   } catch (error) {
-    console.error("Database query error : ", error);
+    console.error("Database query error : ", error as Error);
     throw new Error("Error in Deleting Data");
   }
 };

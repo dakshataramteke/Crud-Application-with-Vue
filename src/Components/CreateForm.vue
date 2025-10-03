@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import axios from "axios";
 import Swal from "sweetalert2";
 import type { Users, Errors } from "../types/types";
+import api from '../axios';
 
 export default defineComponent({
   name: "User Form",
@@ -61,29 +61,40 @@ export default defineComponent({
         this.formData.dateOfBirth = this.formatDate(this.formData.dateOfBirth);
 
         try {
-          const response = await axios.post(
-            "http://localhost:3000/api/users/create",
-            this.formData
+          const response = await api.post(
+            "users/create",
+            this.formData,
           );
-
-          await Swal.fire({
-            title: "Successfully",
-            text: "New User Created",
-            icon: "success",
-            iconColor: "#1a9922",
-            confirmButtonColor: "#0953B5",
-          });
-
-          this.formData = {
+          if (response.status === 200) {
+            await Swal.fire({
+              title: "Successfully",
+              text: "New User Created",
+              icon: "success",
+              iconColor: "#1a9922",
+              confirmButtonColor: "#0953B5",
+            });
+              this.formData = {
             firstName: "",
             lastName: "",
             dateOfBirth: "",
             mobileNumber: "",
             address: "",
           };
+          } 
         } catch (err) {
-          console.error(err);
-        } finally {
+          console.error(err as Error);
+          if(err as Error){
+            await Swal.fire({
+              title: "Error",
+              text: "Please Login First",
+              icon: "error",
+              iconColor: "#dc143c",
+              confirmButtonColor: "#0953B5",
+            });
+           
+          }
+        }
+         finally {
           this.isLoading = false;
         }
       }
@@ -93,7 +104,9 @@ export default defineComponent({
 </script>
 <template>
   <!-- Registration Form  -->
-  <main class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]">
+  <main
+    class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-60px)]"
+  >
     <form @submit.prevent="handleSubmit">
       <div class="container py-3">
         <div class="row">
@@ -109,8 +122,8 @@ export default defineComponent({
                 type="text"
                 v-model="formData.firstName"
                 class="border border-[#002F63] p-1 my-1.5 focus:outline-none w-full"
-              />
-              <p v-if="errors.firstName" class="text-red-500">
+              
+              />              <p v-if="errors.firstName" class="text-red-500">
                 {{ errors.firstName }}
               </p>
             </div>
@@ -202,9 +215,8 @@ export default defineComponent({
   padding: 0.75rem 1.25rem;
   margin: 0.825rem 0;
 }
-
 /* ok Button Color  */
-div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm){
+div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm) {
   background-color: #2b6abc !important;
 }
 </style>

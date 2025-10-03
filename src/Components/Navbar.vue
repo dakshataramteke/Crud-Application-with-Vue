@@ -15,9 +15,9 @@ export default defineComponent({
     AllData,
     EditForm,
   },
-data() {
+  data() {
     return {
-      permissions: [] as string[], // 👈 store from child
+      permissions: [] as string[],
     };
   },
   setup() {
@@ -26,7 +26,7 @@ data() {
     return { router, route };
   },
   methods: {
-     handlePermissions(perms: string[]) {
+    handlePermissions(perms: string[]) {
       console.log("Received permissions in Navbar:", perms);
       this.permissions = perms;
     },
@@ -52,28 +52,22 @@ data() {
       <div class="container flex items-center h-[60px]">
         <ul class="flex justify-between w-full">
           <div class="flex">
-            <li class="list-none" >
+            <li class="list-none">
               <RouterLink to="/users" class="text-white font-bold">
                 <span>Users</span>
               </RouterLink>
             </li>
-               
-            <!-- <li class="list-none">
-              <RouterLink to="/users/create" class="mx-4 text-white font-bold">
-                <span> Create</span>
-              </RouterLink>
-            </li> -->
 
-<li v-if="permissions.includes('create_record')" class="list-none">
-  <RouterLink to="/users/create" class="mx-4 text-white font-bold">
-    <span>Create</span>
-  </RouterLink>
-</li>
+
+            <li v-if="permissions.includes('create_record')" class="list-none">
+              <RouterLink to="/users/create" class="mx-4 text-white font-bold">
+                <span>Create</span>
+              </RouterLink>
+            </li>
 
           </div>
 
           <div class="flex">
-            <!-- <li class="list-none cursor-pointer mx-4 text-white font-bold">{{ role }}</li> -->
             <li class="list-none cursor-pointer mx-4 text-white font-bold" @click="logOut">
               <span>Log Out</span>
             </li>
@@ -84,7 +78,7 @@ data() {
   </header>
 
   <!-- <RouterView /> -->
-   <RouterView @update-permissions="handlePermissions" />
+  <RouterView @update-permissions="handlePermissions" />
 
 </template>
 

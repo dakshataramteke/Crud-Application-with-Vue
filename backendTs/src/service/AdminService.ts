@@ -6,7 +6,7 @@ import { Admin, LoginAdmin } from "../types/admin";
 /* === Create an Account === */
 
 const createAccount = async (adminData: Admin) => {
-  const { email, password, role } = adminData;
+  const { email, password, role_id } = adminData;
   const checkExisting = `SELECT * FROM admin WHERE email = $1`;
   try {
     const existingResult = await databaseConn.query(checkExisting, [email]);
@@ -19,11 +19,11 @@ const createAccount = async (adminData: Admin) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const sql = `
-      INSERT INTO admin ( email, password, role)
+      INSERT INTO admin ( email, password, role_id)
       VALUES ($1, $2, $3)
       RETURNING *
     `;
-    const values = [email, hashedPassword, role];
+    const values = [email, hashedPassword, role_id];
 
     const result = await databaseConn.query(sql, values);
     return result.rows[0];

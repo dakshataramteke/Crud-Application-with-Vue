@@ -16,7 +16,7 @@ address:Joi.string().required()
 const adminSchema = Joi.object({
 email:Joi.string().required(),
 password:Joi.string().required(),
-role:Joi.string().required()
+role_id:Joi.string().required()
 })
 
 const loginSchema = Joi.object({

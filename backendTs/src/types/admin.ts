@@ -13,7 +13,7 @@ export interface PaginationQuery {
 export interface Admin{
   email:string,
   password: string,
-  role: string
+  role_id: number // n
 }
 
 export interface LoginAdmin{
@@ -24,7 +24,8 @@ export interface LoginAdmin{
 // Jwt from jsonwebtoken 
 export interface JWTPayload extends JwtPayload{
   email:string,
-  password:string
+  password:string, 
+  role_id : number // n
 }
 
 
@@ -34,16 +35,11 @@ export interface AuthRequest extends Request {
   user?:{
   adminid: number;
     email: string;
-    role: string;
+    role_id: string;
   },
   permissions?:string[]
   
 }
-
-// export interface PermissionRequest extends Request, PaginationQuery{
-//   permissions? :string[];
-//   roles?: string[];
-// } 
 
 export interface PermissionRequest
   extends Request<{}, {}, {}, PaginationQuery> {

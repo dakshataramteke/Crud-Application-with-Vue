@@ -30,10 +30,9 @@ export const Register = async (req: Request, res: Response) => {
 export const Login = async (req: Request, res: Response) => {
   try {
     const LoginData: LoginAdmin = req.body;
-    // console.log("Login Data is ", LoginData)
     const {token,user} = await AdminService.LoginAccount(LoginData);
-    const roleData = user.role
-    console.log("Users of Main Login Data result",roleData);
+    const roleData = user.role_id
+    // console.log("Login Data result Admin Controller ",roleData);
     const encrypt = encryptToken(token);
     // set cookies from utils
     setCookie(res, "token", encrypt);

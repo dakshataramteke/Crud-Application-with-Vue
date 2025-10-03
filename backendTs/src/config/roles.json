@@ -1,7 +1,7 @@
 {
   "roles": [
     {
-      "name": "superadmin",
+      "name": "admin",
       "permissions": [
         "create_record",
         "read_record",
@@ -10,15 +10,17 @@
       ]
     },
     {
-      "name": "admin",
+      "name": "manager",
       "permissions": [
         "create_record",
-        "read_record"
+        "read_record",
+        "update_record"
       ]
     },
     {
-      "name": "user",
+      "name": "employee",
       "permissions": [
+        "create_record",
         "read_record"
       ]
     }

@@ -26,56 +26,6 @@ export const createUser = async (req: Request, res: Response) => {
 
 /* ==== Get All Users Data ==== */
 
-// export const getUsers = async (
-//   req: Request<{}, {}, {}, PaginationQuery>,
-//   res: Response
-// ) => {
-//   try {
-//     const userPermissions: string[] | undefined = req.name?.permissions;
-//     const requiredPermission = "read_record";
-
-//     if (!userPermissions || !userPermissions.includes(requiredPermission)) {
-//       return res.status(403).json({
-//         success: false,
-//         message: "You do not have permission to view users.",
-//       });
-//     }
-//     console.log("search", req.query);
-//     const {
-//       query: searchTerm,
-//       page = "1",
-//       limit = "10",
-//       sortBy = "created_at",
-//       order = "asc",
-//     } = req.query;
-
-//     const pageNum = parseInt(page, 10);
-//     const limitNum = parseInt(limit, 10);
-
-//     const params: GetUsersParams = {
-//       query: searchTerm,
-//       page: pageNum,
-//       limit: limitNum,
-//       sortBy,
-//       order,
-//     };
-//     const users = await userService.getUsersData(params);
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Get User Successfully",
-//       data: users,
-//     });
-//   } catch (error) {
-//     console.error("Error in getting Data:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: (error as Error).message,
-//     });
-//   }
-// };
-
-
 export const getUsers = async (
   req:PermissionRequest,
   res: Response
@@ -85,6 +35,7 @@ export const getUsers = async (
       console.log("User Controller no Permission found", req.permissions)
       return res.status(400).json({message:"No Permission found"})
     }
+    console.log("The Request Permission is ", req.permissions)
     console.log("search", req.query);
     const {
       query: searchTerm,

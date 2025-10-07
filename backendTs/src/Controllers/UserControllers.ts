@@ -1,6 +1,7 @@
 import userService from "../service/UserService";
 import type { Request, Response } from "express";
 import type { GetUsersParams, PaginationQuery, Users} from "../types/types";
+import { PermissionRequest } from '../types/admin';
 
 /* === Registration Form === */
 
@@ -26,10 +27,15 @@ export const createUser = async (req: Request, res: Response) => {
 /* ==== Get All Users Data ==== */
 
 export const getUsers = async (
-  req: Request<{}, {}, {}, PaginationQuery>,
+  req:PermissionRequest,
   res: Response
 ) => {
   try {
+    if(!req.permissions){
+      console.log("User Controller no Permission found", req.permissions)
+      return res.status(400).json({message:"No Permission found"})
+    }
+    console.log("The Request Permission is ", req.permissions)
     console.log("search", req.query);
     const {
       query: searchTerm,
@@ -54,7 +60,10 @@ export const getUsers = async (
     res.status(200).json({
       success: true,
       message: "Get User Successfully",
-      data: users,
+     data: {
+    users: users,
+    permissions: req.permissions,
+  },
     });
   } catch (error) {
     console.error("Error in getting Data:", error);
@@ -64,7 +73,6 @@ export const getUsers = async (
     });
   }
 };
-
 /* === Get Edit USers ===  */
 
 export const getEditUser = async (req: Request, res: Response) => {

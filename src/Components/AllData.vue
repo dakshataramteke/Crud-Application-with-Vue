@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import axios from "axios";
 import Swal from "sweetalert2";
 import type { User } from "../types/types";
+import api from '../axios';
 
 export default defineComponent({
+  emits: ["update-permissions"],
   data() {
     return {
       data: [] as User[],
@@ -16,11 +17,10 @@ export default defineComponent({
       selectedSortBy: "",
       selectedOrder: "",
       error: null as string | null,
+      permissions: [] as string[]
     };
   },
   computed: {
-
-
     visiblePages(): number[] {
       const total = this.totalPages;
       const current = this.currentPage;
@@ -51,21 +51,16 @@ export default defineComponent({
     },
   },
   methods: {
-    
-    formatDate(dateStr: string) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  const dateString = d.toDateString(); 
-  const date = dateString.split(" "); 
-  return `${date[2]} ${date[1]} ${date[3]}`; 
 
+formatDate(dateStr:string): string{
+  return dateStr ? new Date(dateStr).toLocaleDateString("en-CA") : " ";
 },
   
     async fetchData() {
       this.isLoading = true;
       this.error = null;
       try {
-        const response = await axios.get("http://localhost:3000/api/users", {
+        const response = await api.get("/users", {
           params: {
             query: this.search,
             sortBy: this.selectedSortBy,
@@ -74,8 +69,16 @@ export default defineComponent({
             limit: this.limit,
           },
         });
-        this.data = response.data.data.result;
-        this.totalPages = Math.ceil(response.data.data.totalUsers / this.limit);
+        console.log("Frontend Response All Users",response);
+
+        // permission 
+         this.permissions = response.data.data.permissions || [];
+        console.log("All Permission Record ", this.permissions);
+
+        this.$emit("update-permissions", this.permissions);
+
+        this.data = response.data.data.users.result;
+        this.totalPages = Math.ceil(response.data.data.users.totalUsers / this.limit);
         setTimeout(() => {
           this.isLoading = false;
         }, 2000);
@@ -95,20 +98,27 @@ export default defineComponent({
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, delete it!",
         });
-
         if (result.isConfirmed) {
-          const response = await axios.delete(`http://localhost:3000/api/${id}/delete`);
-          console.log(response.data);
+          const response = await api.delete(`/${id}/delete`, 
+        );
 
           await Swal.fire({
             title: "Deleted!",
-            text: "Your file has been deleted.",
+            text: "Your User has been deleted.",
             icon: "success",
             iconColor: "#dc143c",
             confirmButtonColor: "#0953B5",
           });
 
           this.fetchData();
+        }else{
+          Swal.fire({
+            title:'Cancel',
+            text:"Your Request is Cancel",
+            icon:'error',
+            iconColor:'#dc143c',
+            confirmButtonColor:'#0953b5'
+          })
         }
       } catch (err) {
         this.error = "There was an error fetching the data: " + (err as Error).message;
@@ -145,7 +155,7 @@ export default defineComponent({
 });
 </script>
 <template>
-  <!-- Table Data  -->
+  
   <div
     v-if="isLoading"
     class="bg-gradient-to-br from-gray-900 to-blue-900 min-h-[calc(100vh-70px)]"
@@ -164,7 +174,7 @@ export default defineComponent({
             <input
               type="search"
               v-model="search"
-              class="border-2 border-white p-2 w-full"
+              class="border-2 border-white p-2 w-full text-white"
               placeholder="Search by Firstname & Lastname"
             />
             <select
@@ -173,7 +183,7 @@ export default defineComponent({
             >
               <option value="">Select Sort By</option>
               <option value="first_name">First Name</option>
-              <option value="dob">Date of Birth</option>
+              <option value="date_of_birth">Date of Birth</option>
             </select>
 
             <select
@@ -210,14 +220,8 @@ export default defineComponent({
                     {{ item.last_name }}
                   </td>
                   <td class="border border-[#002F63] px-2">
-                    <!-- {{
-                      item.date_of_birth
-                        .slice(0, 10)
-                        .split("-")
-                        .reverse()
-                        .join("-")
-                    }} -->
-{{ formatDate(item.date_of_birth) }}
+                 
+                {{ formatDate(item.date_of_birth) }}
                   </td>
                   <td class="border border-[#002F63] px-2">
                     {{ item.mobile_number }}
@@ -228,15 +232,17 @@ export default defineComponent({
                   <td
                     class="border border-[#002F63] px-2 flex justify-center flex-col md:flex-row pt-2"
                   >
-                    <button>
+                    <button v-if="permissions.includes('update_record')">
                       <RouterLink
                         :to="{ path: '/users/' + item.id + '/edit' }"
                         class="mr-2 p-1 m-1 bg-[#2b6abc] text-white px-2 cursor-pointer"
-                        >Edit</RouterLink
+                        >
+                        Edit</RouterLink
                       >
                     </button>
 
                     <button
+                    v-if="permissions.includes('delete_record')"
                       class="text-white p-1 m-1 bg-red-500 px-2 cursor-pointer"
                       @click="deleteItem(item.id)"
                     >
@@ -267,7 +273,7 @@ export default defineComponent({
     </main>
 
     <main class="py-5">
-      <!-- Pagination  -->
+     
       <div class="pagination flex justify-around">
         <ul class="flex justify-center cursor-pointer">
           <li @click="previousPage" class="hover:bg-blue-500 list-none">Previous</li>
